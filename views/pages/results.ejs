@@ -1,0 +1,122 @@
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#customers {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#customers td, #customers th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#customers tr:nth-child(even){background-color: #f2f2f2;}
+
+#customers tr:hover {background-color: #ddd;}
+
+#customers th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+
+.button {
+  display: inline-block;
+  border-radius: 4px;
+  background-color: #09b860;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 28px;
+  padding: 20px;
+  width: 200px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.button span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.button:hover span {
+  padding-right: 25px;
+}
+
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+
+/* Header/Logo Title */
+.header {
+  padding: 60px;
+  text-align: center;
+  background: #0e2072;
+  color: white;
+  font-size: 30px;
+}
+
+/* Page Content */
+.content {padding:20px;}
+
+
+</style>
+<title> Postal Calculation</title>
+</head>
+<body>
+
+    
+    <div class="header">
+        <h1>Postal Rate Calculator</h1>
+        <p>Your Postal Rate</p>
+      </div>
+
+      <%  var arr = {"letter_stamp": "Letter Stamped", "letter_meter": "Letter Metered", "large_env": "Large Envelope Flat", "first_class": "First-Class Package Service"}; %>
+
+<table id="customers">
+  <tr>
+    <th>Package Type  </th>
+    <th>Package Weight</th>
+    <th>Package Cost  </th>
+  </tr>
+  <tr>
+    <td><%= arr[type] %></td>
+    <td><%= weight %> Ounces</td>
+    <td>$ <%= parseFloat(cost).toFixed(2) %> </td>
+  </tr>
+  </table>
+
+  <hr>
+
+  <button class="button" style="vertical-align:middle"><span> <a href="/">Calculate</a> </span></button>
+  <button class="button" style="vertical-align:middle"><span> <a href="/">Calculate</a> </span></button>
+
+</body>
+</html>
+
+
+  
+    
