@@ -82,8 +82,21 @@ express()
            cost = 1.00
             break;
           case (weight > 1):
-            diff = parseInt(weight) - 1
-           cost = parseFloat((.20 * diff) -1);
+            diff = parseFloat(weight) - 1
+            if (diff < 1)
+            {
+              cost = 1.20
+            }
+            else
+            {
+              cost = parseFloat(1 + (.20 * parseInt(diff)));
+              if(parseFloat(diff) > 0)
+              {
+                cost += .20;
+
+
+              }
+            }
             break;
           default:
            cost = -1;
