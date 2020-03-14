@@ -1,0 +1,134 @@
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#customers {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#customers td, #customers th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#customers tr:nth-child(even){background-color: #f2f2f2;}
+
+#customers tr:hover {background-color: #ddd;}
+
+#customers th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+
+.button {
+  display: inline-block;
+  border-radius: 4px;
+  background-color: #09b860;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 28px;
+  padding: 20px;
+  width: 200px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.button span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.button:hover span {
+  padding-right: 25px;
+}
+
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+
+.myheading {
+  padding: 12px 16px;
+  background: blue;
+  color: white;
+  font-size: 18px;
+}
+
+/* Header/Logo Title */
+.header {
+  padding: 60px;
+  text-align: center;
+  background: #0e2072;
+  color: white;
+  font-size: 30px;
+}
+
+/* Page Content */
+.content {padding:20px;}
+
+
+</style>
+<title> Give me THE ID</title>
+</head>
+<body>
+
+    
+    <div class="header">
+        <h1>GIVEME ID</h1>
+        <p>Give me the ID</p>
+      </div>
+
+     
+
+<table id="customers">
+  <tr>
+    <th>Person id  </th>
+    <th>Person First Name </th>
+    <th>Person Last Name  </th>
+  </tr>
+  <tr>
+    <td> <%= person_id  %>   </td>
+    <td> <%= first_name %>   </td>
+    <td> <%= first_name %>   </td>
+  </tr>
+  </table>
+
+  <hr>
+
+
+  <p class="myheading">Input ID: </p>
+  <form action="/return_of_db" method="GET">
+    <input type="Number" name="id">
+    <button class="button" style="vertical-align:middle" type="submit">SUBMIT</button>
+  </form>
+
+
+</body>
+</html>
+
+
+  
+    

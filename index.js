@@ -1,6 +1,12 @@
 const express = require('express')
 const path = require('path')
+const {Pool} = require('pg')
 const PORT = process.env.PORT || 5000
+
+
+const connectionString = process.env.DATABASE_URL || 'postgres://umihiiovjmsfyf:7a3a75f614339d054773380e39ac5f79beec45d9b34fb4e2c81e3ce07abdcf45@ec2-18-210-51-239.compute-1.amazonaws.com:5432/d272ttsve49d9d?ssl=true';
+
+const pool = new Pool({connectionString: connectionString});
 
 
 express()
@@ -8,8 +14,141 @@ express()
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
   .get('/', (req, res) => res.render('pages/index'))
+  .use(require('./routes'))
+  .use(require('./store'))
+  .use('/images', express.static(__dirname + '/images'))
   .get('/results',handleRate)
+  .get('/getPerson',getPerson)
+  .get('/storeitems',load_browse)
+  .get('/products',get_store_items)
+  .get('/return_of_db', return_db)
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
+
+
+  
+  function load_browse(req,res)
+  {
+    res.render('pages/browse');
+
+
+  }
+
+
+
+  function get_store_items(request,response){
+
+  
+    grab_from_db(function(error,result){
+
+      if (error || result == null || result.length ==0){
+        response.status(500).json({success:false, data:error});
+      } else {
+
+        const products = result;
+
+        params = result; //chance to remove [0]
+
+        response.status(200).json(products);
+
+        //response.render('pages/browse', params);
+      }
+
+    });
+  }
+
+  function grab_from_db(callback){
+
+    console.log("Getting person from DB with all items");
+
+    const sql = "SELECT * from product";
+
+    pool.query(sql, function(err,result){
+
+      if (err){
+        console.log("Error in query: ");
+        console.log(err);
+        callback(err,null);
+      }
+
+   
+
+    console.log("Found result: " + JSON.stringify(result.rows));
+
+
+    callback(null,result.rows);
+  });
+}
+
+
+
+  function return_db(request,response)
+  {
+
+    const id = request.query.id;
+
+
+    getPersonFromDb(id,function(error,result){
+
+      if (error || result == null || result.length != 1){
+        response.status(500).json({success:false, data: error});
+
+      } else{
+        const person = result[0];
+
+        params = result[0]
+
+        //response.status(200).json(person);
+
+        //add code here to load page....
+        response.render('pages/result_person', params);
+      }
+
+
+    });
+  }
+
+
+
+
+  function getPersonFromDb(id,callback){
+    console.log("Getting person from DB with id: " + id);
+
+    
+
+    const sql = "SELECT * from person WHERE person_id= $1::int";
+
+    const params = [id];
+
+    pool.query(sql, params, function(err,result){
+
+      if (err){
+        console.log("Error in query: ");
+        console.log(err);
+        callback(err,null);
+  
+      }
+
+      console.log("Found result: " + JSON.stringify(result.rows));
+
+
+      callback(null,result.rows);
+
+
+});
+
+} // End of getPersonFromDb
+
+
+
+
+  function getPerson(request,response)
+  {
+
+    //params = {weight: weight, cost: cost, type: type};
+    response.render('pages/getPerson');
+  }
+
+
 
 
   function handleRate(request,response)
