@@ -9,6 +9,19 @@
 
 //anonymous function jquery
 $(document).ready(()=>{
+
+  $('#readButton').click(() => {
+    console.log('read button clicked');
+
+    $("#nameBox").val();
+
+
+
+  });//readButton click method
+
+
+
+
   //This will select an element by id
   $('#allItemsButton').click(() =>{
     //onclick
@@ -19,9 +32,29 @@ $(document).ready(()=>{
        //callback called when suceed
        success: (data) => {
          console.log('ajax success!',data);
+
+         result = "<div class='w3-row-padding'>"; 
+
+          //+
+
+         for(var i = 0; i < data.length; i++)
+         {
+           result += "<div class='w3-col l3 m6 w3-margin-bottom'>";
+           result += "<div class='w3-display-container'>";
+           result += "<div class='w3-display-topleft w3-black w3-padding'>" + data[i].product_name + "</div>";
+           result += "<img src='" + data[i].picture + "' alt='" + data[i].product_name + "' style='width:100%'>";
+           result += "</div>";
+           result += "</div>";
+           
+           
+         }
+
+         //+
          
+         result += "</div>";
+
          //select status id element display in html
-         $('#status').html('All products:' + data[0].product_name + ' ' +  data[1].product_name);
+         $('#status').html(result);
 
        }//sucess data call
 
@@ -29,6 +62,7 @@ $(document).ready(()=>{
 
 
   });//allItemsButton.click
+                               
 
 
 });//document
@@ -65,14 +99,18 @@ $(document).ready(()=>{
     <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Nakajima's Wonder Emporium Store</h3>
   </div>
 
+
+  Name: <input id="nameBox" type="text" size="20"/>
+
   <!-- Jquery button is here-->
   <button id="allItemsButton">Show Items</button>
+
+  <!-- Jquery button is here-->
+  <button id="readButton">readButton</button>
 
   <!--Display Jquery results this is temporary-->
 
   <div id="status">
-
-
   </div>
 
 
