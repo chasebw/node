@@ -1,6 +1,7 @@
 const express = require('express')
 const path = require('path')
 const {Pool} = require('pg')
+//use heroku enviroment port// or use 5000 not there
 const PORT = process.env.PORT || 5000
 
 
@@ -22,6 +23,7 @@ express()
   .get('/storeitems',load_browse)
   .get('/products',get_store_items)
   .get('/return_of_db', return_db)
+  //throw in port // then console.log the port we are listening on
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
 
@@ -32,7 +34,6 @@ express()
 
 
   }
-
 
 
   function get_store_items(request,response){
