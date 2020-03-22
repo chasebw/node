@@ -107,6 +107,57 @@ VALUES ('The 2 Screen Phone','A phone that doubles what you had before.', 799.99
 
 
 
+CREATE TABLE customer(
+    customer_id SERIAL PRIMARY KEY,
+    customer_name VARCHAR(40) NOT NULL,
+    address VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE product_orders(
+    customer_order_id SERIAL PRIMARY KEY,
+    customer_id INT NOT NULL REFERENCES customer(customer_id),
+    orders_id INT NOT NULL REFERENCES orders(orders_id),
+    product_id INT NOT NULL REFERENCES product(product_id)
+);
+
+
+CREATE TABLE orders
+(
+orders_id SERIAL PRIMARY KEY,
+customer_id INT NOT NULL REFERENCES customer(customer_id),
+orders_date DATE 
+);
+
+
+INSERT INTO customer (customer_name, address) VALUES ('John Smith','P. Sherman 42 Wallaby Way, Sydney, Australia 2000');
+INSERT INTO orders (customer_id, orders_date) VALUES (1,NOW());
+INSERT INTO product_orders(customer_id,product_id, orders_id) VALUES (1,3,1);
+
+SELECT *
+FROM product_orders po
+JOIN product p
+ON po.product_id = p.product_id
+WHERE po.customer_id = 1;
+
+
+DELETE FROM product_orders WHERE customer_order_id = 6;
+
+
+
+
+--CREATE TABLE product 
+--(
+ --   product_id SERIAL PRIMARY KEY,
+ --   product_name VARCHAR(30) NOT NULL,
+ --   product_description VARCHAR(250),
+ --   price float NOT NULL,
+ --   picture VARCHAR(800)
+--
+--);
+
+
+
+
 
 
 

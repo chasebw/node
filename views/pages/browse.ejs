@@ -7,93 +7,453 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
 
-//anonymous function jquery
-$(document).ready(()=>{
-
-  $('#cartPopup').click(() => {
-    console.log('cart click');
-
-    //$('#id').css("display","block")
-    $('.bg-modal').css("display","flex");
-
-  });//cartPopup on click
-
-  $('.close').click(() => {
 
 
-    $('.bg-modal').css("display","none");
+  //refresh cart....
+  function refresh_cart() {
 
+    console.log('cart refresh');
 
-  });//close_cartPopup
+    //cart click AJAX START
 
-
-
-
-  $('#readButton').click(() => {
-    console.log('read button clicked');
-
-    $("#nameBox").val();
-
-
-
-  });//readButton click method
-
-
-
-
-  //This will select an element by id
-  $('#allItemsButton').click(() =>{
-    //onclick
     $.ajax({
-      url:'products/',
-      type: 'GET',
+      url: 'customer/',
+      type: 'POST',
       dataType: 'json', //will parse json into javascript object
-       //callback called when suceed
-       success: (data) => {
-         console.log('ajax success!',data);
+      //callback called when suceed
+      success: (data) => {
+        console.log('ajax success!', data);
 
-         result = "<div class='w3-row-padding'>"; 
+
+        var newCart = "";
+
+        newCart += "<table class='table table-hover'";
+        newCart += "<thead> <tr>";
+        newCart += "<th>Product Name</th>";
+        newCart += "<th>Description</th>";
+        newCart += "<th>Price</th>";
+        newCart += "<th>Action</th>";
+        newCart += "</tr></thead>";
+        newCart += "</tbody>";
+
+
+
+
+        $.each(data, function (index, value) {
+
+          newCart += "<tr>";
+          newCart += "<td>" + this.product_name + "</td>";
+          newCart += "<td>" + this.product_description + "</td>";
+          newCart += "<td>" + "$" + this.price + "</td>";
+          newCart += "<td>";
+          newCart += "<form action='/remove' method='POST' onSubmit='return ajax_FormSubmitter(this);'><button type='submit' class='btn btn-danger' name='remove' value='" + this.customer_order_id + "'>REMOVE ITEM</button></form>";
+
+          newCart += "</td>";
+          newCart += "</tr>";
+
+          //newCart += this.product_name;
+
+        });// END LOOP
+
+        newCart += "</tbody></table>";
+        result = "";
+
+        result = newCart;
+
+        //select status id element display in html
+        console.log('changed edit html');
+        $('.edit').html(result);
+
+      }//sucess data call
+
+    }).done(function(){//ajax function call
+
+      $('.edit').html(newCart);
+      //location.reload(true);
+      //$('.bg-modal').css("display", "block");
+      //$('.product').css("display", "flex");
+    
+      });//ajax function call
+    //CART CLICK AJAX END
+
+  }
+
+
+
+  function ajax_FormSubmitter(form) {
+
+    console.log('running remove ajax_form submit');
+
+
+    //store form in form variable
+
+    
+
+
+    var $that = $(form);
+      var that = $that;
+      url = that.attr('action'),
+      type = that.attr('method'),
+      data = {};
+
+      if(that.attr('class') == 'remover')
+      {
+        console.log('Is a remover button!!!');
+        refresh_cart();
+
+        //bg-modal
+      $('.bg-modal').css("display", "none");
+      $('body').css("overflow", "visible");
+      $('html').css("overflow", "visible");
+
+      $('.bg-modal').css("display", "flex");
+      $('body').css("overflow", "hidden");
+      $('html').css("overflow", "hidden");
+
+      //Make page not scrollable at that moment 
+    
+      }
+
+
+
+    //find anything with attribute name
+    that.find('[name]').each(function (index, value) {
+
+      var that = $(this),
+        name = that.attr('name'),
+        value = that.val();
+
+
+      data[name] = value;
+    });
+
+    $.ajax({
+      url: url,
+      type: type,
+      data: data,
+      success: function (response) {
+        console.log(response);
+        console.log("Ajax success on cart :)");
+      }
+    }).done (function() {
+
+      console.log("running done");
+      $('.bg-modal').css("display", "none");
+      $('body').css("overflow", "visible");
+      $('html').css("overflow", "visible");
+
+      $('.bg-modal').css("display", "flex");
+      $('body').css("overflow", "hidden");
+      $('html').css("overflow", "hidden");
+
+    });
+
+
+
+    // this causes the form not to submit 
+    return false;
+  }
+
+
+
+  function item_popup(item_element) {
+    console.log(item_element);
+    console.log("this is my element");
+
+    console.log("Outputting Item_element.value below: ");
+    console.log(item_element.value);
+
+    myitemvalue = document.getElementById('test1').getAttribute('value');
+    //var product=document.getElementById('prod1').getAttribute('value');
+
+
+    console.log(myitemvalue);
+
+    $('.product').css("display", "flex");
+    //make page non-scrollable
+    $('body').css("overflow", "hidden");
+    $('html').css("overflow", "hidden");
+    //no scroll
+
+  }
+
+  // function formStop(){
+  //   console.log('stopping form form submitting');
+  //     return false;
+  //   }
+
+  //anonymous function jquery
+  $(document).ready(() => {
+
+
+
+
+
+    //remove_form_for 
+    $('.remove_form').on("submit", function () {
+
+
+
+      console.log('running remove ajax_form submit');
+
+
+      //store form in form variable
+      var that = $(this),
+        url = that.attr('action'),
+        type = that.attr('method'),
+        data = {};
+
+      //find anything with attribute name
+      that.find('[name]').each(function (index, value) {
+
+        var that = $(this),
+          name = that.attr('name'),
+          value = that.val();
+
+        data[name] = value;
+      });
+
+      $.ajax({
+        url: url,
+        type: type,
+        data: data,
+        success: function (response) {
+          console.log(response);
+          console.log("Ajax success on cart :)");
+        }
+      });
+
+      ///TODO:   this is a problem need to fix will close cart.... 
+      $('.bg-modal').css("display", "none");
+      $('.product').css("display", "none");
+      //Make page not scrollable at that moment 
+      $('body').css("overflow", "visible");
+      $('html').css("overflow", "visible");
+
+
+
+      // this causes the form not to submit 
+      return false;
+    });
+
+
+
+    //ajax_form
+    $('.ajax_form').on('submit', function () {
+
+      console.log('running ajax_form submit');
+
+
+
+
+      //store form in form variable
+      var that = $(this),
+        url = that.attr('action'),
+        type = that.attr('method'),
+        data = {};
+
+
+      if (that.attr("id") == 'product_form') {
+        console.log('is product form');
+        //refresh cart when you add a new item
+        refresh_cart();
+
+      }
+
+      //find anything with attribute name
+      that.find('[name]').each(function (index, value) {
+
+        var that = $(this),
+          name = that.attr('name'),
+          value = that.val();
+
+
+        data[name] = value;
+
+
+
+      });
+
+
+      $.ajax({
+        url: url,
+        type: type,
+        data: data,
+        success: function (response) {
+          console.log(response);
+          console.log("Ajax success on cart :)");
+        }
+      });
+
+      ///TODO:   this is a problem need to fix will close cart.... 
+      $('.bg-modal').css("display", "none");
+      $('.product').css("display", "none");
+      //Make page not scrollable at that moment 
+      $('body').css("overflow", "visible");
+      $('html').css("overflow", "visible");
+
+
+
+      // this causes the form not to submit 
+      return false;
+    });
+
+
+    $('#add_cart').click(() => {
+      console.log('add item to cart');
+      var buttonval = $('#add_cart').attr("value");
+      console.log(buttonval);
+
+    });
+
+
+
+    $('#cartPopup').click(() => {
+      console.log('cart click');
+
+      //cart click AJAX START
+
+      $.ajax({
+        url: 'customer/',
+        type: 'POST',
+        dataType: 'json', //will parse json into javascript object
+        //callback called when suceed
+        success: (data) => {
+          console.log('ajax success!', data);
+
+
+          var newCart = "";
+
+          newCart += "<table class='table table-hover'";
+          newCart += "<thead> <tr>";
+          newCart += "<th>Product Name</th>";
+          newCart += "<th>Description</th>";
+          newCart += "<th>Price</th>";
+          newCart += "<th>Action</th>";
+          newCart += "</tr></thead>";
+          newCart += "</tbody>";
+
+
+
+
+          $.each(data, function (index, value) {
+
+            newCart += "<tr>";
+            newCart += "<td>" + this.product_name + "</td>";
+            newCart += "<td>" + this.product_description + "</td>";
+            newCart += "<td>" + "$" + this.price + "</td>";
+            newCart += "<td>";
+            newCart += "<form action='/remove' method='POST' class='remover' onSubmit='return ajax_FormSubmitter(this);'><button type='submit' class='btn btn-danger' name='remove' value='" + this.customer_order_id + "'>REMOVE ITEM</button></form>";
+
+            newCart += "</td>";
+            newCart += "</tr>";
+
+            //newCart += this.product_name;
+
+          });// END LOOP
+
+          newCart += "</tbody></table>";
+          result = "";
+
+          result = newCart;
+
+          //select status id element display in html
+          $('.edit').html(result);
+
+        }//sucess data call
+
+      });//ajax function call
+      //CART CLICK AJAX END
+
+
+
+
+
+      //$('#id').css("display","block")
+      $('.bg-modal').css("display", "flex");
+      //Make page not scrollable at that moment ?????
+      $('body').css("overflow", "hidden");
+      $('html').css("overflow", "hidden");
+
+    });//cartPopup on click
+
+    $('.close').click(() => {
+
+
+      $('.bg-modal').css("display", "none");
+      $('.product').css("display", "none");
+      //Make page not scrollable at that moment ?????
+      $('body').css("overflow", "visible");
+      $('html').css("overflow", "visible");
+
+
+
+    });//close_cartPopup
+
+
+
+
+    $('#readButton').click(() => {
+      console.log('read button clicked');
+
+      $("#nameBox").val();
+
+
+
+    });//readButton click method
+
+
+
+
+    //This will select an element by id
+    $('#allItemsButton').click(() => {
+      //onclick
+      $.ajax({
+        url: 'products/',
+        type: 'GET',
+        dataType: 'json', //will parse json into javascript object
+        //callback called when suceed
+        success: (data) => {
+          console.log('ajax success!', data);
+
+          result = "<div class='w3-row-padding'>";
 
           //+
 
-         for(var i = 0; i < data.length; i++)
-         {
-           result += "<div class='w3-col l3 m6 w3-margin-bottom'>";
-           result += "<div class='w3-display-container'>";
-           result += "<div class='w3-display-topleft w3-black w3-padding'>" + data[i].product_name + "</div>";
-           result += "<img src='" + data[i].picture + "' alt='" + data[i].product_name + "' style='width:100%'>";
-           result += "</div>";
-           result += "</div>";
-         }
+          for (var i = 0; i < data.length; i++) {
+            result += "<div class='w3-col l3 m6 w3-margin-bottom'>";
+            result += "<div class='w3-display-container'>";
+            result += "<div class='w3-display-topleft w3-black w3-padding'>" + data[i].product_name + "</div>";
+            result += "<img src='" + data[i].picture + "' alt='" + data[i].product_name + "' style='width:100%'" + " value='" + data[i].product_id + "'>";
+            result += "</div>";
+            result += "</div>";
+          }
 
-         //+
-         
-         result += "</div>";
+          //+
 
-         //select status id element display in html
-         $('#status').html(result);
-
-       }//sucess data call
-
-    });//ajax function call
+          result += "</div>";
+          //select status id element display in html
+          $('#status').html(result);
+        }//sucess data call
+      });//ajax function call
+    });//allItemsButton.click
 
 
-  });//allItemsButton.click
-                               
 
-
-});//document
+  });//document
 
 </script>
 <style>
-  .bg-modal {
+  .bg-modal,
+  .product {
     width: 100%;
     height: 100%;
-     /* make background behind popup transparent
+    /* make background behind popup transparent
      using RGBALPHA */
-    background-color: rgba(0,0,0, 0.7);
-     /* center make the position absolute*/
+    background-color: rgba(0, 0, 0, 0.7);
+    /* center make the position absolute*/
     position: absolute;
+    /*before top: 0*/
     top: 0;
     display: flex;
     /* center  horizontally*/
@@ -101,10 +461,37 @@ $(document).ready(()=>{
     /* center  vertically*/
     align-items: center;
     display: none;
+    position: fixed;
+    top: calc(50% - width(100%));
+    /* half of width*/
+    left: calc(50% - height(100));
+    /* half of height*/
 
   }
 
+
+
+
+
+
   .bg-modal-content {
+    background-color: rgb(255, 255, 255);
+    border-radius: 4px;
+    /*make everything centered*/
+    text-align: center;
+    /*Make padding of 20px*/
+    padding: 20px;
+    /* Can position items relative to it*/
+    /*position: relative;*/
+    position: fixed;
+    /*top: calc(50% - 150px);*/
+    /* half of width*/
+    /*left: calc(50% - 250px);*/
+    /* half of height*/
+
+  }
+
+  .bg-modal-product-content {
     width: 500px;
     height: 300px;
     background-color: white;
@@ -114,10 +501,15 @@ $(document).ready(()=>{
     /*Make padding of 20px*/
     padding: 20px;
     /* Can position items relative to it*/
-    position: relative;
+    /*position: relative;*/
+    position: fixed;
+    top: calc(50% - 150px);
+    /* half of width*/
+    left: calc(50% - 250px);
+    /* half of height*/
   }
 
-  input{
+  input {
     /*This will making items not all fit on on line*/
     width: 50%;
     /* margin on top and bottom 15 but left right same*/
@@ -126,7 +518,11 @@ $(document).ready(()=>{
 
   }
 
-  .close{
+  .w3-display-container {
+    border: solid black;
+  }
+
+  .close {
     position: absolute;
     top: 0;
     right: 14px;
@@ -138,200 +534,244 @@ $(document).ready(()=>{
 
   }
 
+  table {
+    background-color: white;
+    font-size: calc(6px + 1vw);
+    font-weight: 400;
+  }
+
+  .table-hover>tbody>tr:hover {
+    background-color: #a5c2bd;
+  }
+
+  .table>tbody>tr>td,
+  .table>tbody>tr>th,
+  .table>tfoot>tr>td,
+  .table>tfoot>tr>th,
+  .table>thead>tr>td,
+  .table>thead>tr>th {
+    padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    border-top: 1px solid rgb(2, 1, 3);
+  }
 </style>
-<body>
 
-<!-- Navbar (sit on top) -->
-<div class="w3-top">
-  <div class="w3-bar w3-white w3-wide w3-padding w3-card">
-    <a href="#home" class="w3-bar-item w3-button"><b>My</b> Store</a>
-    <!-- Float links to the right. Hide them on small screens -->
-    <div class="w3-right w3-hide-small">
-      <a id='cartPopup'  class="w3-bar-item w3-button">Cart</a> 
-      <a href="#about" class="w3-bar-item w3-button">About</a>
-      <a href="#contact" class="w3-bar-item w3-button">Customer Service</a>
-    </div>
-  </div>
-</div>
+<body >
 
-<!-- Header -->
-<header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
-  <img class="w3-image" src="/w3images/architect.jpg" alt="Architecture" width="1500" height="800">
-  <div class="w3-display-middle w3-margin-top w3-center">
-    <h1 class="w3-xxlarge w3-text-white"><span class="w3-padding w3-black w3-opacity-min"><b>BLACK</b></span> <span class="w3-hide-small w3-text-light-grey">Cool/span></h1>
-  </div>
-</header>
-
-<!-- Page content -->
-<div class="w3-content w3-padding" style="max-width:1564px">
-
-  <!-- Project Section -->
-  <div class="w3-container w3-padding-32" id="projects">
-    <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Nakajima's Wonder Emporium Store</h3>
-  </div>
-
-
-  Name: <input id="nameBox" type="text" size="20"/>
-
-  <!-- Jquery button is here-->
-  <button id="allItemsButton">Show Items</button>
-
-  <!-- Jquery button is here-->
-  <button id="readButton">readButton</button>
-
-  <!--Display Jquery results this is temporary-->
-
-  <div id="status">
-  </div>
-
-
-
-  <!--Jquery display temporary-->
-
-  <div class="w3-row-padding">
-    <div class="w3-col l3 m6 w3-margin-bottom">
-      <div class="w3-display-container">
-        <div class="w3-display-topleft w3-black w3-padding">Phone 0</div>
-        <img src="../../images/phone.jpg" alt="House" style="width:100%">
-      </div>
-    </div>
-    <div class="w3-col l3 m6 w3-margin-bottom">
-      <div class="w3-display-container">
-        <div class="w3-display-topleft w3-black w3-padding">Phone 1</div>
-        <img src="../../images/phone.jpg" alt="House" style="width:100%">
-      </div>
-    </div>
-    <div class="w3-col l3 m6 w3-margin-bottom">
-      <div class="w3-display-container">
-        <div class="w3-display-topleft w3-black w3-padding">Phone2</div>
-        <img src="/images/phone.jpg" alt="House" style="width:100%">
-      </div>
-    </div>
-    <div class="w3-col l3 m6 w3-margin-bottom">
-      <div class="w3-display-container">
-        <div class="w3-display-topleft w3-black w3-padding">Phone3</div>
-        <img src="/images/phone.jpg" alt="House" style="width:100%">
+  <!-- Navbar (sit on top) -->
+  <div class="w3-top">
+    <div class="w3-bar w3-white w3-wide w3-padding w3-card">
+      <a href="#home" class="w3-bar-item w3-button"><b>My</b> Store</a>
+      <!-- Float links to the right. Hide them on small screens -->
+      <div class="w3-right w3-hide-small">
+        <a id='cartPopup' class="w3-bar-item w3-button">Cart</a>
+        <a href="#about" class="w3-bar-item w3-button">About</a>
+        <a href="#contact" class="w3-bar-item w3-button">Customer Service</a>
       </div>
     </div>
   </div>
 
-  <div class="w3-row-padding">
-    <div class="w3-col l3 m6 w3-margin-bottom">
-      <div class="w3-display-container">
-        <div class="w3-display-topleft w3-black w3-padding">Iphone 6</div>
-        <img src="/images/phone.jpg" alt="House" style="width:99%">
+  <!-- Header -->
+  <header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
+    <img class="w3-image" src="/w3images/architect.jpg" alt="Architecture" width="1500" height="800">
+    <div class="w3-display-middle w3-margin-top w3-center">
+      <h1 class="w3-xxlarge w3-text-white"><span class="w3-padding w3-black w3-opacity-min"><b>BLACK</b></span> <span
+          class="w3-hide-small w3-text-light-grey">Cool/span></h1>
+    </div>
+  </header>
+
+  <!-- Page content -->
+  <div class="w3-content w3-padding" style="max-width:1564px">
+
+    <!-- Project Section -->
+    <div class="w3-container w3-padding-32" id="projects">
+      <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Nakajima's Wonder Emporium Store</h3>
+    </div>
+
+
+
+
+    <!-- Jquery button is here-->
+    <button id="allItemsButton">Show Items</button>
+
+    <!-- Jquery button is here-->
+    <button id="readButton">readButton</button>
+
+    <!--Display Jquery results this is temporary-->
+
+    <div id="status">
+    </div>
+
+
+
+    <!--Jquery display temporary-->
+
+    <div class="w3-row-padding">
+
+
+      <div class="w3-col l3 m6 w3-margin-bottom">
+        <!-- When they click on this div display container then they get modal popup -->
+        <div class="w3-display-container">
+          <div class="w3-display-topleft w3-black w3-padding">Phone 0</div>
+          <img src="images/phone.jpg" alt="House" style="width:100%" id="test1" onclick="item_popup(this)" value='4'>
+        </div>
+      </div>
+
+
+      <div class="w3-col l3 m6 w3-margin-bottom">
+        <div class="w3-display-container">
+          <div class="w3-display-topleft w3-black w3-padding">Phone 1</div>
+          <img src="../../images/phone.jpg" alt="House" style="width:100%">
+        </div>
+      </div>
+      <div class="w3-col l3 m6 w3-margin-bottom">
+        <div class="w3-display-container">
+          <div class="w3-display-topleft w3-black w3-padding">Phone2</div>
+          <img src="/images/phone.jpg" alt="House" style="width:100%">
+        </div>
+      </div>
+      <div class="w3-col l3 m6 w3-margin-bottom">
+        <div class="w3-display-container">
+          <div class="w3-display-topleft w3-black w3-padding">Phone3</div>
+          <img src="/images/phone.jpg" alt="House" style="width:100%">
+        </div>
       </div>
     </div>
-    <div class="w3-col l3 m6 w3-margin-bottom">
-      <div class="w3-display-container">
-        <div class="w3-display-topleft w3-black w3-padding">Iphone 7</div>
-        <img src="/images/phone.jpg" alt="House" style="width:99%">
+
+    <div class="w3-row-padding">
+      <div class="w3-col l3 m6 w3-margin-bottom">
+        <div class="w3-display-container">
+          <div class="w3-display-topleft w3-black w3-padding">Iphone 6</div>
+          <img src="/images/phone.jpg" alt="House" style="width:99%">
+        </div>
+      </div>
+      <div class="w3-col l3 m6 w3-margin-bottom">
+        <div class="w3-display-container">
+          <div class="w3-display-topleft w3-black w3-padding">Iphone 7</div>
+          <img src="/images/phone.jpg" alt="House" style="width:99%">
+        </div>
+      </div>
+      <div class="w3-col l3 m6 w3-margin-bottom">
+        <div class="w3-display-container">
+          <div class="w3-display-topleft w3-black w3-padding">Iphone 8</div>
+          <img src="/images/phone.jpg" alt="House" style="width:99%">
+        </div>
+      </div>
+      <div class="w3-col l3 m6 w3-margin-bottom">
+        <div class="w3-display-container">
+          <div class="w3-display-topleft w3-black w3-padding">Iphone 9</div>
+          <img src="images/phone.jpg" alt="House" style="width:99%">
+        </div>
       </div>
     </div>
-    <div class="w3-col l3 m6 w3-margin-bottom">
-      <div class="w3-display-container">
-        <div class="w3-display-topleft w3-black w3-padding">Iphone 8</div>
-        <img src="/images/phone.jpg" alt="House" style="width:99%">
+
+    <!-- About Section -->
+    <div class="w3-container w3-padding-32" id="about">
+      <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">About</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+        magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat. Excepteur sint
+        occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur
+        adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+        quis nostrud exercitation ullamco
+        laboris nisi ut aliquip ex ea commodo consequat.
+      </p>
+    </div>
+
+    <div class="w3-row-padding w3-grayscale">
+      <div class="w3-col l3 m6 w3-margin-bottom">
+        <img src="../../images/phone.jpg" alt="John" style="width:100%">
+        <h3>Feature Deal</h3>
+        <p class="w3-opacity">BIG DEAL</p>
+        <p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
+        <p><button class="w3-button w3-light-grey w3-block">BUY</button></p>
+      </div>
+      <div class="w3-col l3 m6 w3-margin-bottom">
+        <img src="../../images/phone.jpg" alt="Jane" style="width:100%">
+        <h3>Feature Deal</h3>
+        <p class="w3-opacity">Big Deal</p>
+        <p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
+        <p><button class="w3-button w3-light-grey w3-block">BUY</button></p>
+      </div>
+      <div class="w3-col l3 m6 w3-margin-bottom">
+        <img src="../../images/phone.jpg" alt="Mike" style="width:100%">
+        <h3>Feature Deal</h3>
+        <p class="w3-opacity">Big Deal</p>
+        <p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
+        <p><button class="w3-button w3-light-grey w3-block">BUY</button></p>
+      </div>
+      <div class="w3-col l3 m6 w3-margin-bottom">
+        <img src="../../images/phone.jpg" alt="Dan" style="width:100%">
+        <h3>Feature Deal</h3>
+        <p class="w3-opacity">Big DEAL</p>
+        <p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
+        <p><button class="w3-button w3-light-grey w3-block">BUY</button></p>
       </div>
     </div>
-    <div class="w3-col l3 m6 w3-margin-bottom">
-      <div class="w3-display-container">
-        <div class="w3-display-topleft w3-black w3-padding">Iphone 9</div>
-        <img src="images/phone.jpg" alt="House" style="width:99%">
-      </div>
+
+    <!-- Contact Section -->
+    <div class="w3-container w3-padding-32" id="contact">
+      <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">SIGN UP FOR MEMBERSHIP</h3>
+      <p>Lets get you apart of our store membership.</p>
+      <form action="/action_page.php" target="_blank">
+        <input class="w3-input w3-border" type="text" placeholder="Name" required name="Name">
+        <input class="w3-input w3-section w3-border" type="text" placeholder="Email" required name="Email">
+        <input class="w3-input w3-section w3-border" type="text" placeholder="Subject" required name="Subject">
+        <input class="w3-input w3-section w3-border" type="text" placeholder="Comment" required name="Comment">
+        <button class="w3-button w3-black w3-section" type="submit">
+          <i class="fa fa-paper-plane"></i> Register
+        </button>
+      </form>
     </div>
+
+    <!-- Image of location/map -->
+    <div class="w3-container">
+      <img src="images/phone.jpg" class="w3-image" style="width:100%">
+    </div>
+
+    <!-- End page content -->
   </div>
 
-  <!-- About Section -->
-  <div class="w3-container w3-padding-32" id="about">
-    <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">About</h3>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint
-      occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-      laboris nisi ut aliquip ex ea commodo consequat.
-    </p>
-  </div>
 
-  <div class="w3-row-padding w3-grayscale">
-    <div class="w3-col l3 m6 w3-margin-bottom">
-      <img src="../../images/phone.jpg" alt="John" style="width:100%">
-      <h3>Feature Deal</h3>
-      <p class="w3-opacity">BIG DEAL</p>
-      <p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
-      <p><button class="w3-button w3-light-grey w3-block">BUY</button></p>
+  <!-- Footer -->
+  <footer class="w3-center w3-black w3-padding-16">
+    <p>POWER ME UP <a href="#" title="W3.CSS" target="_blank" class="w3-hover-text-green">Cool Footer</a></p>
+  </footer>
+
+
+  <!-- Popup Cart Modal Section-->
+  <div class="bg-modal">
+    <div class="bg-modal-content" id="cart">
+      <!-- We are using + instead of cross we will twist in css-->
+      <div class="close">+</div>
+      <div class="edit"></div>
+      </form>
     </div>
-    <div class="w3-col l3 m6 w3-margin-bottom">
-      <img src="../../images/phone.jpg" alt="Jane" style="width:100%">
-      <h3>Feature Deal</h3>
-      <p class="w3-opacity">Big Deal</p>
-      <p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
-      <p><button class="w3-button w3-light-grey w3-block">BUY</button></p>
+  </div> <!-- Popup Cart Modal Section END-->
+
+
+
+  <!-- Product Popup Modal -->
+  <div class="product">
+    <div class="bg-modal-product-content">
+      <!-- We are using + instead of cross we will twist in css-->
+      <div class="close">+</div>
+      <img src="images/phone.jpg" alt="phone" height="100" width="50">
+      <form action="/add_cart" method="POST" id="product_form" class='ajax_form'>
+        <button type='submit' value='6' name='id' id="add_cart"> ADD TO CART </button>
+      </form>
     </div>
-    <div class="w3-col l3 m6 w3-margin-bottom">
-      <img src="../../images/phone.jpg" alt="Mike" style="width:100%">
-      <h3>Feature Deal</h3>
-      <p class="w3-opacity">Big Deal</p>
-      <p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
-      <p><button class="w3-button w3-light-grey w3-block">BUY</button></p>
-    </div>
-    <div class="w3-col l3 m6 w3-margin-bottom">
-      <img src="../../images/phone.jpg" alt="Dan" style="width:100%">
-      <h3>Feature Deal</h3>
-      <p class="w3-opacity">Big DEAL</p>
-      <p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
-      <p><button class="w3-button w3-light-grey w3-block">BUY</button></p>
-    </div>
-  </div>
-
-  <!-- Contact Section -->
-  <div class="w3-container w3-padding-32" id="contact">
-    <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">SIGN UP FOR MEMBERSHIP</h3>
-    <p>Lets get you apart of our store membership.</p>
-    <form action="/action_page.php" target="_blank">
-      <input class="w3-input w3-border" type="text" placeholder="Name" required name="Name">
-      <input class="w3-input w3-section w3-border" type="text" placeholder="Email" required name="Email">
-      <input class="w3-input w3-section w3-border" type="text" placeholder="Subject" required name="Subject">
-      <input class="w3-input w3-section w3-border" type="text" placeholder="Comment" required name="Comment">
-      <button class="w3-button w3-black w3-section" type="submit">
-        <i class="fa fa-paper-plane"></i> Register
-      </button>
-    </form>
-  </div>
-  
-<!-- Image of location/map -->
-<div class="w3-container">
-  <img src="images/phone.jpg" class="w3-image" style="width:100%">
-</div>
-
-<!-- End page content -->
-</div>
+  </div> <!-- Popup product Modal Section END-->
 
 
-<!-- Footer -->
-<footer class="w3-center w3-black w3-padding-16">
-  <p>POWER ME UP <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-text-green">Cool Footer</a></p>
-</footer>
 
 
-<!-- Popup Cart Modal Section-->
-
-<div class="bg-modal">
-  <div class="bg-modal-content">
-    <!-- We are using + instead of cross we will twist in css-->
-    <div class="close">+</div>
-    <img src="images/phone.jpg" alt="phone" height="100" width="50">
-    <form action="">
-      <input type="text" placeholder="Name">
-      <input type="text" placeholder="E-Mail">
-      <a href="" class="button">Submit</a>
 
 
-    </form>
 
-  
-  </div>
-
-</div>
 
 
 </body>
+
 </html>

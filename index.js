@@ -1,17 +1,22 @@
 const express = require('express')
 const path = require('path')
+
+const ProductController = require('./controllers/getProducts.js');
+const CartController = require('./controllers/cart.js');
+const OrderController = require('./controllers/order.js');
+
 const {Pool} = require('pg')
 //use heroku enviroment port// or use 5000 not there
 const PORT = process.env.PORT || 5000
-
 
 const connectionString = process.env.DATABASE_URL || 'postgres://umihiiovjmsfyf:7a3a75f614339d054773380e39ac5f79beec45d9b34fb4e2c81e3ce07abdcf45@ec2-18-210-51-239.compute-1.amazonaws.com:5432/d272ttsve49d9d?ssl=true';
 
 const pool = new Pool({connectionString: connectionString});
 
-
 express()
   .use(express.static(path.join(__dirname, 'public')))
+  .use(express.urlencoded({extended:true}))//support url encoded bodies
+  .use(express.json())
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
   .get('/', (req, res) => res.render('pages/index'))
@@ -20,67 +25,20 @@ express()
   .use('/images', express.static(__dirname + '/images'))
   .get('/results',handleRate)
   .get('/getPerson',getPerson)
+  .post('/add_cart', CartController.add_cart)
   .get('/storeitems',load_browse)
-  .get('/products',get_store_items)
+  .post('/customer',OrderController.load_cart)
+  .post('/remove', OrderController.remove_item)
+  .get('/products', ProductController.getProducts)
   .get('/return_of_db', return_db)
   //throw in port // then console.log the port we are listening on
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
 
-  
   function load_browse(req,res)
   {
     res.render('pages/browse');
-
-
   }
-
-
-  function get_store_items(request,response){
-
-  
-    grab_from_db(function(error,result){
-
-      if (error || result == null || result.length ==0){
-        response.status(500).json({success:false, data:error});
-      } else {
-
-        const products = result;
-
-        params = result; //chance to remove [0]
-
-        response.status(200).json(products);
-
-        //response.render('pages/browse', params);
-      }
-
-    });
-  }
-
-  function grab_from_db(callback){
-
-    console.log("Getting person from DB with all items");
-
-    const sql = "SELECT * from product";
-
-    pool.query(sql, function(err,result){
-
-      if (err){
-        console.log("Error in query: ");
-        console.log(err);
-        callback(err,null);
-      }
-
-   
-
-    console.log("Found result: " + JSON.stringify(result.rows));
-
-
-    callback(null,result.rows);
-  });
-}
-
-
 
   function return_db(request,response)
   {
