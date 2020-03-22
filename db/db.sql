@@ -145,6 +145,10 @@ DELETE FROM product_orders WHERE customer_order_id = 6;
 
 
 
+
+
+
+
 --CREATE TABLE product 
 --(
  --   product_id SERIAL PRIMARY KEY,

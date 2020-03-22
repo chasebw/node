@@ -26,7 +26,9 @@ function add_cart(request, response) {
       params = result; //chance to remove [0]
       console.log("added recevied");
       //response.status(500).json({success:false, data:error});
+
       response.status(200).json(params);
+      
       //response.render('pages/browse', params);
     }
 

@@ -29,6 +29,7 @@ express()
   .get('/storeitems',load_browse)
   .post('/customer',OrderController.load_cart)
   .post('/remove', OrderController.remove_item)
+  .post('/single_item', ProductController.get_single_item)
   .get('/products', ProductController.getProducts)
   .get('/return_of_db', return_db)
   //throw in port // then console.log the port we are listening on

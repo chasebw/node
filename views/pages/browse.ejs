@@ -64,7 +64,7 @@
       }//sucess data call
     });
   }
-    
+
   function ajax_FormSubmitter(form) {
 
     console.log('running remove ajax_form submit');
@@ -72,21 +72,20 @@
 
     //store form in form variable
 
-    
+
 
 
     var $that = $(form);
-      var that = $that;
-      url = that.attr('action'),
+    var that = $that;
+    url = that.attr('action'),
       type = that.attr('method'),
       data = {};
 
-      if(that.attr('class') == 'remover')
-      {
-        console.log('Is a remover button!!!');
-        refresh_cart();
+    if (that.attr('class') == 'remover') {
+      console.log('Is a remover button!!!');
+      refresh_cart();
 
-        //bg-modal
+      //bg-modal
       $('.bg-modal').css("display", "none");
       $('body').css("overflow", "visible");
       $('html').css("overflow", "visible");
@@ -96,8 +95,8 @@
       $('html').css("overflow", "hidden");
 
       //Make page not scrollable at that moment 
-    
-      }
+
+    }
 
 
 
@@ -119,7 +118,19 @@
       success: function (response) {
         console.log(response);
         console.log("Ajax success on cart :)");
+        //use success callback to referesh cart
         refresh_cart();
+        if (url == '/add_cart') {
+
+          console.log('added_cart');
+          $('.bg-modal').css("display", "none");
+          $('.product').css("display", "none");
+          //Make page not scrollable at that moment 
+          $('body').css("overflow", "visible");
+          $('html').css("overflow", "visible");
+
+        }
+
       }
     });
 
@@ -132,34 +143,62 @@
 
 
   function item_popup(item_element) {
+    console.log("this is my element I clicked on");
     console.log(item_element);
-    console.log("this is my element");
+
 
     console.log("Outputting Item_element.value below: ");
-    console.log(item_element.value);
 
-    myitemvalue = document.getElementById('test1').getAttribute('value');
+    myitemvalue = item_element.getAttribute('value');
     //var product=document.getElementById('prod1').getAttribute('value');
-
-
     console.log(myitemvalue);
 
-    $('.product').css("display", "flex");
-    //make page non-scrollable
-    $('body').css("overflow", "hidden");
-    $('html').css("overflow", "hidden");
+    $.ajax({
+      url: 'single_item/',
+      type: 'POST',
+      data: { query_id: myitemvalue },
+      success: function (response) {
+        console.log(response);
+        console.log("Ajax success on product_popup :)");
+        //use success callback to referesh cart
+        console.log(myitemvalue);
+
+
+        //make result html here
+        var popupinfo = "";
+
+        popupinfo += "<img src='" + response[0].picture + "'alt ='" + response[0].product_name + "'height='100' width='50'>";
+        popupinfo += "<form action='/add_cart' method='POST' onSubmit='return ajax_FormSubmitter(this);'>";
+        popupinfo += "<button type='submit' value='" + response[0].product_id + "' name='id' id='add_cart'> Add To Cart</button> </form>";
+
+
+
+        $('#product_popup').html(popupinfo);
+
+        $('.product').css("display", "flex");
+        //make page non-scrollable
+        $('body').css("overflow", "hidden");
+        $('html').css("overflow", "hidden");
+
+
+      }
+    });
+
+
+
+    ////DO AJAX for SINGLE_ITEM
+
+
+    //SUCCESS
+
+    ///Make Box Show up...
+
     //no scroll
 
   }
 
-  // function formStop(){
-  //   console.log('stopping form form submitting');
-  //     return false;
-  //   }
-
   //anonymous function jquery
   $(document).ready(() => {
-
 
 
 
@@ -198,7 +237,7 @@
         }
       });
 
-      ///TODO:   this is a problem need to fix will close cart.... 
+
       $('.bg-modal').css("display", "none");
       $('.product').css("display", "none");
       //Make page not scrollable at that moment 
@@ -228,12 +267,7 @@
         data = {};
 
 
-      if (that.attr("id") == 'product_form') {
-        console.log('is product form');
-        //refresh cart when you add a new item
-        refresh_cart();
-
-      }
+      //refresh cart if was here
 
       //find anything with attribute name
       that.find('[name]').each(function (index, value) {
@@ -257,6 +291,13 @@
         success: function (response) {
           console.log(response);
           console.log("Ajax success on cart :)");
+
+          if (that.attr("id") == 'product_form') {
+            console.log('is product form');
+            //refresh cart when you add a new item
+            refresh_cart();
+
+          }
         }
       });
 
@@ -399,7 +440,7 @@
             result += "<div class='w3-col l3 m6 w3-margin-bottom'>";
             result += "<div class='w3-display-container'>";
             result += "<div class='w3-display-topleft w3-black w3-padding'>" + data[i].product_name + "</div>";
-            result += "<img src='" + data[i].picture + "' alt='" + data[i].product_name + "' style='width:100%'" + " value='" + data[i].product_id + "'>";
+            result += "<img  src='" + data[i].picture + "' alt='" + data[i].product_name + "' style='width:100%'" + " value='" + data[i].product_id + "' onclick='item_popup(this)'>";
             result += "</div>";
             result += "</div>";
           }
@@ -532,7 +573,7 @@
   }
 </style>
 
-<body >
+<body>
 
   <!-- Navbar (sit on top) -->
   <div class="w3-top">
@@ -732,10 +773,12 @@
     <div class="bg-modal-product-content">
       <!-- We are using + instead of cross we will twist in css-->
       <div class="close">+</div>
-      <img src="images/phone.jpg" alt="phone" height="100" width="50">
-      <form action="/add_cart" method="POST" id="product_form" class='ajax_form'>
-        <button type='submit' value='6' name='id' id="add_cart"> ADD TO CART </button>
-      </form>
+      <div id='product_popup'>
+        <img src="images/phone.jpg" alt="phone" height="100" width="50">
+        <form action="/add_cart" method="POST" id="product_form" class='ajax_form'>
+          <button type='submit' value='6' name='id' id="add_cart"> ADD TO CART </button>
+        </form>
+      </div>
     </div>
   </div> <!-- Popup product Modal Section END-->
 
