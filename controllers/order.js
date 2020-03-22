@@ -22,7 +22,7 @@ function remove_item(request, response) {
       console.log(result);
       const deletion = result;
       //Don't send back a response
-      //response.status(200).json(result);
+      response.status(200).json(result);
 
     }
 

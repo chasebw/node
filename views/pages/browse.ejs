@@ -36,9 +36,6 @@
         newCart += "</tr></thead>";
         newCart += "</tbody>";
 
-
-
-
         $.each(data, function (index, value) {
 
           newCart += "<tr>";
@@ -65,21 +62,9 @@
         $('.edit').html(result);
 
       }//sucess data call
-
-    }).done(function(){//ajax function call
-
-      $('.edit').html(newCart);
-      //location.reload(true);
-      //$('.bg-modal').css("display", "block");
-      //$('.product').css("display", "flex");
-    
-      });//ajax function call
-    //CART CLICK AJAX END
-
+    });
   }
-
-
-
+    
   function ajax_FormSubmitter(form) {
 
     console.log('running remove ajax_form submit');
@@ -134,18 +119,8 @@
       success: function (response) {
         console.log(response);
         console.log("Ajax success on cart :)");
+        refresh_cart();
       }
-    }).done (function() {
-
-      console.log("running done");
-      $('.bg-modal').css("display", "none");
-      $('body').css("overflow", "visible");
-      $('html').css("overflow", "visible");
-
-      $('.bg-modal').css("display", "flex");
-      $('body').css("overflow", "hidden");
-      $('html').css("overflow", "hidden");
-
     });
 
 
@@ -574,7 +549,7 @@
 
   <!-- Header -->
   <header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
-    <img class="w3-image" src="/w3images/architect.jpg" alt="Architecture" width="1500" height="800">
+    <img class="w3-image" src="" alt="Architecture" width="1500" height="800">
     <div class="w3-display-middle w3-margin-top w3-center">
       <h1 class="w3-xxlarge w3-text-white"><span class="w3-padding w3-black w3-opacity-min"><b>BLACK</b></span> <span
           class="w3-hide-small w3-text-light-grey">Cool/span></h1>
