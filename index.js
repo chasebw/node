@@ -4,6 +4,9 @@ const path = require('path')
 const ProductController = require('./controllers/getProducts.js');
 const CartController = require('./controllers/cart.js');
 const OrderController = require('./controllers/order.js');
+const SignupController = require('./controllers/signup.js');
+const loginController = require('./controllers/login.js');
+const session = require('express-session');
 
 const {Pool} = require('pg')
 //use heroku enviroment port// or use 5000 not there
@@ -30,8 +33,16 @@ express()
   .post('/customer',OrderController.load_cart)
   .post('/remove', OrderController.remove_item)
   .post('/single_item', ProductController.get_single_item)
+  .post('/signup', SignupController.signupcall)
+  .post('/login', loginController.logincall)
   .get('/products', ProductController.getProducts)
   .get('/return_of_db', return_db)
+  .use(session({
+    secret: 'secret-key',
+    resave: false,
+    saveUninitialized: false
+
+  }))
   //throw in port // then console.log the port we are listening on
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 

@@ -67,13 +67,10 @@
 
   function ajax_FormSubmitter(form) {
 
-    console.log('running remove ajax_form submit');
+    console.log('running ajax form submit');
 
 
     //store form in form variable
-
-
-
 
     var $that = $(form);
     var that = $that;
@@ -97,6 +94,8 @@
       //Make page not scrollable at that moment 
 
     }
+
+  
 
 
 
@@ -264,7 +263,16 @@
       var that = $(this),
         url = that.attr('action'),
         type = that.attr('method'),
+        id = that.attr('id');
         data = {};
+
+
+        if(id == 'signup')
+        {
+          console.log('is sign up form');
+          $('#signup-popup').css('display','none');
+        
+        }
 
 
       //refresh cart if was here
@@ -458,10 +466,43 @@
 
   });//document
 
+  function login(){
+    document.getElementById('login-popup').style.display = "flex";
+  }
+  function closelogin(){
+    document.getElementById('login-popup').style.display = "none";
+  }
+  function signin(){
+    document.getElementById('signup-popup').style.display = "flex";
+  }
+  function closesignin(){
+    document.getElementById('signup-popup').style.display = "none";
+  }
+
+  function validatepass(form)
+  {
+    console.log('validating signup');
+    
+     if($('#signup-pass-verify').val() == $('#signup-pass').val() && $('#signup-username') != "")
+     {
+       //make error class hidden
+       document.getElementById('pass-signup-error').style.display = 'none';
+       return true;
+     }
+     else
+     {
+       //make error case visible
+       document.getElementById('pass-signup-error').style.display = 'block';
+       return false;
+     }
+
+  }
+
+
 </script>
 <style>
   .bg-modal,
-  .product {
+  .product, .login-popup{
     width: 100%;
     height: 100%;
     /* make background behind popup transparent
@@ -507,9 +548,9 @@
 
   }
 
-  .bg-modal-product-content {
+  .bg-modal-product-content, .login-content-popup{
     width: 500px;
-    height: 300px;
+    height: 350px;
     background-color: white;
     border-radius: 4px;
     /*make everything centered*/
@@ -528,6 +569,7 @@
   input {
     /*This will making items not all fit on on line*/
     width: 50%;
+    padding: 0;
     /* margin on top and bottom 15 but left right same*/
     margin: 15px auto;
     display: block;
@@ -536,6 +578,11 @@
 
   .w3-display-container {
     border: solid black;
+  }
+
+  .error{
+    color: red;
+    display: none;
   }
 
   .close {
@@ -571,6 +618,65 @@
     vertical-align: top;
     border-top: 1px solid rgb(2, 1, 3);
   }
+
+  .container-login{
+    text-align: center;
+  }
+
+  .container-login h1{
+    color: white;
+    font-size: 36px;
+    margin-bottom: 40px;
+
+
+  }
+
+  .button-login{
+    background: white;
+    padding: 10px 15px;
+    color: #34495e;
+    font-weight: bolder;
+    text-transform: uppercase;
+    font-size: 18px;
+    border-radius: 5px;
+    box-shadow: 6px 6px 29px -4px rgba(0, 0, 0, 0.75);
+    text-decoration: none;
+    transition: 0.4s;
+  }
+
+  .button-login:hover{
+    background: #34495e;
+    color: white;
+  }
+
+
+  input{
+    margin: 20px auto;
+    display: block;
+    width: 50%;
+    padding: 0px;
+    border: 1px solid gray;
+  }
+
+  .close-2 {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    background: white;
+    height: 20px;
+    width: 20px;
+    border-radius: 50px;
+    border-radius:50px;
+    box-shadow: 6px 6px 29px -4px rgba(0, 0, 0, 0.75);
+    cursor: pointer;
+  }
+
+  .userpic{
+    height: 50px;
+    width: 50px;
+
+  }
+
 </style>
 
 <body>
@@ -597,6 +703,14 @@
     </div>
   </header>
 
+  <div class="container-login">
+    <h1>Popup LOGIN</h1>
+    <a href="#" class="button-login" onclick="login()">LOGIN</a>
+    <a href="#" class="button-login" onclick="signin()">SIGN UP</a>
+  </div>
+
+
+
   <!-- Page content -->
   <div class="w3-content w3-padding" style="max-width:1564px">
 
@@ -609,19 +723,16 @@
 
 
     <!-- Jquery button is here-->
-    <button id="allItemsButton">Show Items</button>
+    <button id="allItemsButton" class="button-login"> Show Items</button>
 
     <!-- Jquery button is here-->
-    <button id="readButton">readButton</button>
 
     <!--Display Jquery results this is temporary-->
 
     <div id="status">
     </div>
-
-
-
     <!--Jquery display temporary-->
+
 
     <div class="w3-row-padding">
 
@@ -765,6 +876,42 @@
       </form>
     </div>
   </div> <!-- Popup Cart Modal Section END-->
+
+  <div class="login-popup" id="login-popup">
+    <div class="login-content-popup">
+      <img src="images/user.jpg" alt="User" class='userpic'>
+      <form action="/login" method="POST" class="ajax_form">
+     <input type="text" placeholder="Username">
+    <input type="password" placeholder="Password">
+    <button type="submit" class="button-login">Login</button>
+    </form>
+      <!-- We are using + instead of x we will twist in css-->
+      <div class="close" onclick="closelogin()">+</div>
+      </form>
+    </div>
+  </div>
+
+
+  <div class="login-popup" id="signup-popup">
+    <div class="login-content-popup">
+      <img src="images/user.jpg" alt="User" class='userpic'>
+    <form action="/signup" method="POST" class='ajax_form' id="signup">
+    <input type="text" placeholder="First Name" name="first_name">
+    <input type="text" placeholder="Last Name" name="last_name">
+    <input type="text" placeholder="Username" name="username">
+    <p class="error" id="pass-signup-error">Passwords Do Not Match</p>
+    <input type="password" name=password placeholder="Password" id="signup-pass">
+    <input type="password" name="password2" placeholder="Password Verification" id="signup-pass-verify">
+    <input type="text" name="cc_number" placeholder="Credit Card #">
+    <input type="text" name="address" placeholder="Address">
+    <button type="submit" class="button-login">Sign Up</button>
+  </form>
+      
+      <!-- We are using + instead of x we will twist in css-->
+      <div class="close" onclick="closesignin()">+</div>
+      </form>
+    </div>
+  </div>
 
 
 

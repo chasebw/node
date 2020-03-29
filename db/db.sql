@@ -1,6 +1,10 @@
 
 
-
+DROP table product CASCADE;
+DROP table orders CASCADE;
+DROP table customer CASCADE;
+DROP table product_orders CASCADE;
+DROP table userinfo CASCADE;
 
 CREATE SEQUENCE myseq_1
 As INT
@@ -109,8 +113,14 @@ VALUES ('The 2 Screen Phone','A phone that doubles what you had before.', 799.99
 
 CREATE TABLE customer(
     customer_id SERIAL PRIMARY KEY,
-    customer_name VARCHAR(40) NOT NULL,
-    address VARCHAR(100) NOT NULL
+    customer_name VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE orders
+(
+orders_id SERIAL PRIMARY KEY,
+customer_id INT NOT NULL REFERENCES customer(customer_id),
+orders_date DATE 
 );
 
 CREATE TABLE product_orders(
@@ -121,26 +131,26 @@ CREATE TABLE product_orders(
 );
 
 
-CREATE TABLE orders
-(
-orders_id SERIAL PRIMARY KEY,
-customer_id INT NOT NULL REFERENCES customer(customer_id),
-orders_date DATE 
+CREATE TABLE userinfo (
+    userinfo_id SERIAL PRIMARY KEY,
+    username VARCHAR(40) NOT NULL,
+    password VARCHAR(40) NOT NULL,
+    customer_id INT NOT NULL REFERENCES customer(customer_id),
+    cc_number VARCHAR(40) NOT NULL,
+    address VARCHAR(100) NOT NULL
 );
 
 
-INSERT INTO customer (customer_name, address) VALUES ('John Smith','P. Sherman 42 Wallaby Way, Sydney, Australia 2000');
+INSERT INTO customer (customer_name) VALUES ('John Smith');
 INSERT INTO orders (customer_id, orders_date) VALUES (1,NOW());
 INSERT INTO product_orders(customer_id,product_id, orders_id) VALUES (1,3,1);
 
-SELECT *
-FROM product_orders po
-JOIN product p
-ON po.product_id = p.product_id
-WHERE po.customer_id = 1;
+INSERT INTO userinfo (customer_id , cc_number, address, username, password) 
+VALUES (1,'4444-4444-4444-44444','P Sherman 42 Wallaby Way Sydney, Australia', 'John124','pass1');
 
 
-DELETE FROM product_orders WHERE customer_order_id = 6;
+
+
 
 
 

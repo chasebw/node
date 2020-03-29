@@ -63,8 +63,6 @@ function grab_single(id,callback){
 
 
 
-
-
 function get_store_items(request,response){
 
   

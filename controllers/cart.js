@@ -67,8 +67,6 @@ function change_db(id, callback) {
 } //ENDOF grab_from_db
 
 
-
-
 module.exports = {
   add_cart: add_cart,
   change_db: change_db
