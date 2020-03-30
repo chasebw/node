@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../styles/cool-form.css">
 <script type="text/javascript">
 
 
@@ -24,6 +26,7 @@
       success: (data) => {
         console.log('ajax success!', data);
 
+        var totalprice = parseFloat(0);
 
         var newCart = "";
 
@@ -48,9 +51,31 @@
           newCart += "</td>";
           newCart += "</tr>";
 
+          totalprice += parseFloat(this.price);
+
           //newCart += this.product_name;
 
         });// END LOOP
+
+        //added
+        var tax = 0;
+          var tax = parseFloat(totalprice * .06);
+          var total = tax + totalprice;
+
+
+         //added
+         newCart += "<tr>";
+        newCart += "<td><strong>Cost</strong></td>";
+        newCart += "<th><strong>Tax</strong></td>";
+        newCart += "<td><strong>Total Price</strong></td>";
+        newCart += "<td><strong>Action</strong></td>"
+        newCart += "</tr>";
+        newCart += "<tr> <td> $ " + totalprice.toFixed(2) +  "</td>";
+        newCart += "<td> $" + tax.toFixed(2)  + " </td>";
+        newCart += "<td> $" + total.toFixed(2)  + " </td>";
+        newCart += "<td>"+  "<form action='' method='POST'  onSubmit='return ajax_FormSubmitter(this);'><button type='submit' class='btn btn-danger' name='remove' value='" + this.customer_order_id +"'>CHECKOUT </button></form>" + "</td>";
+        
+        //added end
 
         newCart += "</tbody></table>";
         result = "";
@@ -267,12 +292,20 @@
         data = {};
 
 
+
+
         if(id == 'signup')
         {
           console.log('is sign up form');
           $('#signup-popup').css('display','none');
         
         }
+        else if (id == 'login_form')
+        {
+          closelogin();
+        }
+    
+    
 
 
       //refresh cart if was here
@@ -345,7 +378,7 @@
         success: (data) => {
           console.log('ajax success!', data);
 
-
+          var totalprice = parseFloat(0);
           var newCart = "";
 
           newCart += "<table class='table table-hover'";
@@ -372,9 +405,31 @@
             newCart += "</td>";
             newCart += "</tr>";
 
+            totalprice += parseFloat(this.price);
+
             //newCart += this.product_name;
 
           });// END LOOP
+
+          //added
+        var tax = 0;
+          var tax = parseFloat(totalprice * .06);
+          var total = tax + totalprice;
+
+
+         //added
+         newCart += "<tr>";
+        newCart += "<td><strong>Cost</strong></td>";
+        newCart += "<th><strong>Tax</strong></td>";
+        newCart += "<td><strong>Total Price</strong></td>";
+        newCart += "<td><strong>Action</strong></td>"
+        newCart += "</tr>";
+        newCart += "<tr> <td> $ " + totalprice.toFixed(2) +  "</td>";
+        newCart += "<td> $" + tax.toFixed(2)  + " </td>";
+        newCart += "<td> $" + total.toFixed(2)  + " </td>";
+        newCart += "<td>"+  "<form action='' method='POST'  onSubmit='return ajax_FormSubmitter(this);'><button type='submit' class='btn btn-danger' name='remove' value='" + this.customer_order_id +"'>CHECKOUT </button></form>" + "</td>";
+        
+        //added end
 
           newCart += "</tbody></table>";
           result = "";
@@ -550,7 +605,7 @@
 
   .bg-modal-product-content, .login-content-popup{
     width: 500px;
-    height: 350px;
+    height: 392px;
     background-color: white;
     border-radius: 4px;
     /*make everything centered*/
@@ -653,6 +708,7 @@
   input{
     margin: 20px auto;
     display: block;
+    height: 65px;
     width: 50%;
     padding: 0px;
     border: 1px solid gray;
@@ -677,6 +733,35 @@
 
   }
 
+  button#allItemsButton {
+    background-color: white;
+    margin-left: 2%;
+    margin-bottom: 2%;
+}
+
+button#allItemsButton:hover {
+    background-color:  #34495e;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.signup-input {
+  color: rgb(5, 5, 5);
+  padding: 15px;
+  height: 27px;
+  margin: auto auto;
+}
+
+.container-2{
+  top: calc(50% - 300px);
+  height: 554px;
+}
+.flex-container{
+  justify-content: center;
+}
+
 </style>
 
 <body>
@@ -699,12 +784,12 @@
     <img class="w3-image" src="" alt="Architecture" width="1500" height="800">
     <div class="w3-display-middle w3-margin-top w3-center">
       <h1 class="w3-xxlarge w3-text-white"><span class="w3-padding w3-black w3-opacity-min"><b>BLACK</b></span> <span
-          class="w3-hide-small w3-text-light-grey">Cool/span></h1>
+          class="w3-hide-small w3-text-light-grey">
     </div>
   </header>
 
   <div class="container-login">
-    <h1>Popup LOGIN</h1>
+    <h1></h1>
     <a href="#" class="button-login" onclick="login()">LOGIN</a>
     <a href="#" class="button-login" onclick="signin()">SIGN UP</a>
   </div>
@@ -721,9 +806,10 @@
 
 
 
-
+     <div class="flex-container">
     <!-- Jquery button is here-->
     <button id="allItemsButton" class="button-login"> Show Items</button>
+  </div>
 
     <!-- Jquery button is here-->
 
@@ -733,65 +819,6 @@
     </div>
     <!--Jquery display temporary-->
 
-
-    <div class="w3-row-padding">
-
-
-      <div class="w3-col l3 m6 w3-margin-bottom">
-        <!-- When they click on this div display container then they get modal popup -->
-        <div class="w3-display-container">
-          <div class="w3-display-topleft w3-black w3-padding">Phone 0</div>
-          <img src="images/phone.jpg" alt="House" style="width:100%" id="test1" onclick="item_popup(this)" value='4'>
-        </div>
-      </div>
-
-
-      <div class="w3-col l3 m6 w3-margin-bottom">
-        <div class="w3-display-container">
-          <div class="w3-display-topleft w3-black w3-padding">Phone 1</div>
-          <img src="../../images/phone.jpg" alt="House" style="width:100%">
-        </div>
-      </div>
-      <div class="w3-col l3 m6 w3-margin-bottom">
-        <div class="w3-display-container">
-          <div class="w3-display-topleft w3-black w3-padding">Phone2</div>
-          <img src="/images/phone.jpg" alt="House" style="width:100%">
-        </div>
-      </div>
-      <div class="w3-col l3 m6 w3-margin-bottom">
-        <div class="w3-display-container">
-          <div class="w3-display-topleft w3-black w3-padding">Phone3</div>
-          <img src="/images/phone.jpg" alt="House" style="width:100%">
-        </div>
-      </div>
-    </div>
-
-    <div class="w3-row-padding">
-      <div class="w3-col l3 m6 w3-margin-bottom">
-        <div class="w3-display-container">
-          <div class="w3-display-topleft w3-black w3-padding">Iphone 6</div>
-          <img src="/images/phone.jpg" alt="House" style="width:99%">
-        </div>
-      </div>
-      <div class="w3-col l3 m6 w3-margin-bottom">
-        <div class="w3-display-container">
-          <div class="w3-display-topleft w3-black w3-padding">Iphone 7</div>
-          <img src="/images/phone.jpg" alt="House" style="width:99%">
-        </div>
-      </div>
-      <div class="w3-col l3 m6 w3-margin-bottom">
-        <div class="w3-display-container">
-          <div class="w3-display-topleft w3-black w3-padding">Iphone 8</div>
-          <img src="/images/phone.jpg" alt="House" style="width:99%">
-        </div>
-      </div>
-      <div class="w3-col l3 m6 w3-margin-bottom">
-        <div class="w3-display-container">
-          <div class="w3-display-topleft w3-black w3-padding">Iphone 9</div>
-          <img src="images/phone.jpg" alt="House" style="width:99%">
-        </div>
-      </div>
-    </div>
 
     <!-- About Section -->
     <div class="w3-container w3-padding-32" id="about">
@@ -809,7 +836,7 @@
     <div class="w3-row-padding w3-grayscale">
       <div class="w3-col l3 m6 w3-margin-bottom">
         <img src="../../images/phone.jpg" alt="John" style="width:100%">
-        <h3>Feature Deal</h3>
+        <h3 style="background-color: rgb(59, 59, 116);" style="color: crimson;">Feature Deal</h3>
         <p class="w3-opacity">BIG DEAL</p>
         <p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
         <p><button class="w3-button w3-light-grey w3-block">BUY</button></p>
@@ -872,44 +899,79 @@
     <div class="bg-modal-content" id="cart">
       <!-- We are using + instead of cross we will twist in css-->
       <div class="close">+</div>
-      <div class="edit"></div>
+      <div class="edit">
+        <table class="table table-hover"> <tbody><tr><th>Product Name:</th><th>Description:</th><th>Price:</th><th>Action</th></tr></tbody><tbody><tr><td>The Rollable Phone</td><td>A phone that can roll open a bigger screen</td><td>$2999.99</td><td><form action="/remove" method="POST" class="remover" onsubmit="return ajax_FormSubmitter(this);"><button type="submit" class="btn btn-danger" name="remove" value="3">REMOVE ITEM</button></form></td></tr><tr><td>The Rollable Phone</td><td>A phone that can roll open a bigger screen</td><td>$2999.99</td><td><form action="/remove" method="POST" class="remover" onsubmit="return ajax_FormSubmitter(this);"><button type="submit" class="btn btn-danger" name="remove" value="4">REMOVE ITEM</button></form></td></tr><tr><td>Iphone 7S</td><td>A Sleek Iphone with a BIG attitude.</td><td>$199.99</td><td><form action="/remove" method="POST" class="remover" onsubmit="return ajax_FormSubmitter(this);"><button type="submit" class="btn btn-danger" name="remove" value="5">REMOVE ITEM</button></form></td></tr><tr><td>The Z Fold</td><td>A dynamically designed smart phone</td><td>$1999.99</td><td><form action="/remove" method="POST" class="remover" onsubmit="return ajax_FormSubmitter(this);"><button type="submit" class="btn btn-danger" name="remove" value="6">REMOVE ITEM</button></form></td></tr><tr><td>The Rollable Phone</td><td>A phone that can roll open a bigger screen</td><td>$2999.99</td><td><form action="/remove" method="POST" class="remover" onsubmit="return ajax_FormSubmitter(this);"><button type="submit" class="btn btn-danger" name="remove" value="7">REMOVE ITEM</button></form></td></tr></tbody></table>
+        
+      </div>
       </form>
     </div>
   </div> <!-- Popup Cart Modal Section END-->
 
+<!-- Login popup start-->
   <div class="login-popup" id="login-popup">
-    <div class="login-content-popup">
-      <img src="images/user.jpg" alt="User" class='userpic'>
-      <form action="/login" method="POST" class="ajax_form">
-     <input type="text" placeholder="Username">
-    <input type="password" placeholder="Password">
-    <button type="submit" class="button-login">Login</button>
-    </form>
-      <!-- We are using + instead of x we will twist in css-->
-      <div class="close" onclick="closelogin()">+</div>
-      </form>
-    </div>
+      <!-- Login form-->
+<div class="container-1">
+  <h2>login</h2>
+  <form action="/login" method="POST" class='ajax_form' id="login_form">
+    <input type="text" class="email" name="username" placeholder="Username">
+    <br/>
+    <input type="password" class="pwd" name="password" placeholder="password">
+ 
+  <a href="#" class="link">
+    forgot your password ?
+  </a>
+  <br/>
+  <button class="register">
+    <span>EXIT</span>
+  </button>
+  <button  type="submit" class="signin">
+    <span>SIGN IN</span>
+  </button>
+</form>
+  <h3>your registration is complete !    </h3>
+  <h3>your sign in is complete !</h3>
+  <div class="reg"></div>
+  <div class="sig"></div>
+<div class="close" onclick="closelogin()">+</div>
+</div>
+
+<!--- Login Form-->
   </div>
+  <!-- Login popup END-->
 
 
   <div class="login-popup" id="signup-popup">
-    <div class="login-content-popup">
-      <img src="images/user.jpg" alt="User" class='userpic'>
-    <form action="/signup" method="POST" class='ajax_form' id="signup">
-    <input type="text" placeholder="First Name" name="first_name">
-    <input type="text" placeholder="Last Name" name="last_name">
-    <input type="text" placeholder="Username" name="username">
-    <p class="error" id="pass-signup-error">Passwords Do Not Match</p>
-    <input type="password" name=password placeholder="Password" id="signup-pass">
-    <input type="password" name="password2" placeholder="Password Verification" id="signup-pass-verify">
-    <input type="text" name="cc_number" placeholder="Credit Card #">
-    <input type="text" name="address" placeholder="Address">
-    <button type="submit" class="button-login">Sign Up</button>
-  </form>
-      
-      <!-- We are using + instead of x we will twist in css-->
-      <div class="close" onclick="closesignin()">+</div>
-      </form>
+    <div class="container-1 container-2">
+      <h2>Sign Up</h2>
+      <form action="/signup" method="POST" class='ajax_form' id="signup">
+        <input type="text" class="email signup-input" name="first_name" placeholder="First Name">
+        <br/>
+        <input type="text" class="pwd signup-input" name="last_name" placeholder="Last Name">
+        <br/>
+        <input type="text" class="pwd signup-input" name="username" placeholder="Username">
+        <br/>
+        <input type="password" class="pwd signup-input" name="password" placeholder="Password">
+        <br/>
+        <input type="password" class="pwd signup-input" name="password2" placeholder="Password Verification">
+        <br/>
+        <input type="text" class="pwd signup-input" name="cc_number" placeholder="Credit Card">
+        <br/>
+        <input type="text" class="pwd signup-input" name="address" placeholder="Address">
+        
+     
+      <br/>
+      <button class="register">
+        <span>EXIT</span>
+      </button>
+      <button  type="submit" class="signin">
+        <span>Register</span>
+      </button>
+    </form>
+      <h3>your registration is complete !    </h3>
+      <h3>your sign in is complete !</h3>
+      <div class="reg"></div>
+      <div class="sig"></div>
+    <div class="close" onclick="closesignin()">+</div>
     </div>
   </div>
 
@@ -935,6 +997,7 @@
 
 
 
+  
 
 
 </body>

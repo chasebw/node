@@ -14,7 +14,7 @@ function add_cart(request, response) {
   console.log('_______________QUEEEERY________________');
   console.log(thequery);
 
-  change_db(id, function (error, result) {
+  change_db(id,request, function (error, result) {
 
     //if (error || result == null || result.length == 0)
     if (error || result == null) {
@@ -38,13 +38,16 @@ function add_cart(request, response) {
 
 
 
-function change_db(id, callback) {
+function change_db(id,request, callback) {
 
   console.log("adding items to cart");
 
-  const sql = "INSERT INTO product_orders(customer_id,product_id, orders_id) VALUES (1,$1,1)";
+  const customer_id = request.session.customer_id;
+  const orders_id = request.session.orders_id;
 
-  const values = [id];
+  const sql = "INSERT INTO product_orders(customer_id,product_id, orders_id) VALUES ($1,$2,$3)";
+
+  const values = [customer_id,id,orders_id];
 
   //const sql = "SELECT * from product";
 

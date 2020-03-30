@@ -72,7 +72,7 @@ function load_cart(request, response) {
   console.log('_______________QUEEEERY________________');
   console.log(thequery);
 
-  grab_db(id, function (error, result) {
+  grab_db(id,request,function (error, result) {
 
     //if (error || result == null || result.length == 0)
     if (error || result == null) {
@@ -94,20 +94,25 @@ function load_cart(request, response) {
 
 
 
-function grab_db(id, callback) {
+function grab_db(id,request, callback) {
 
   console.log("Loading Cart");
 
 
+  //change to grab it from the session instead be cause wya
+
+  const customer_id = request.session.customer_id;
+  const orders_id = request.session.orders_id;
 
 
-  const sql = "SELECT * FROM product_orders po JOIN product p ON po.product_id = p.product_id WHERE po.customer_id = 1;"
+  //add where customer and orders id
+  const sql = "SELECT * FROM product_orders po JOIN product p ON po.product_id = p.product_id WHERE po.customer_id = $1 AND po.orders_id = $2;";
 
-  //const values = [id];
+  const values = [customer_id,orders_id];
 
   //const sql = "SELECT * from product";
 
-  pool.query(sql, function (err, result) {
+  pool.query(sql,values, function (err, result) {
 
     if (err) {
       console.log("Error in query: ");

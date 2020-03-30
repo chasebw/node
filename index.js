@@ -1,6 +1,12 @@
 const express = require('express')
 const path = require('path')
 
+const TWO_HOURS = 1000 * 60 * 60 * 2;
+SESS_LIFETIME = TWO_HOURS;
+SESS_NAME = 'sid';
+
+
+
 const ProductController = require('./controllers/getProducts.js');
 const CartController = require('./controllers/cart.js');
 const OrderController = require('./controllers/order.js');
@@ -17,14 +23,25 @@ const connectionString = process.env.DATABASE_URL || 'postgres://umihiiovjmsfyf:
 const pool = new Pool({connectionString: connectionString});
 
 express()
+.use(session({
+  name: SESS_NAME,
+  secret: 'secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: SESS_LIFETIME,
+    sameSite:true
+  }
+
+}))
   .use(express.static(path.join(__dirname, 'public')))
   .use(express.urlencoded({extended:true}))//support url encoded bodies
   .use(express.json())
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
-  .get('/', (req, res) => res.render('pages/index'))
   .use(require('./routes'))
   .use(require('./store'))
+  .use('/styles',express.static(__dirname + '/styles'))
   .use('/images', express.static(__dirname + '/images'))
   .get('/results',handleRate)
   .get('/getPerson',getPerson)
@@ -34,17 +51,154 @@ express()
   .post('/remove', OrderController.remove_item)
   .post('/single_item', ProductController.get_single_item)
   .post('/signup', SignupController.signupcall)
-  .post('/login', loginController.logincall)
+  .post('/login', logincall)
   .get('/products', ProductController.getProducts)
   .get('/return_of_db', return_db)
-  .use(session({
-    secret: 'secret-key',
-    resave: false,
-    saveUninitialized: false
-
-  }))
+  .get('/', (req, res) => {
+    res.render('pages/index');
+    console.log(req.session);
+    const { customer_id } = req.session;
+    const { orders_id } = req.session;
+  }
+    )
   //throw in port // then console.log the port we are listening on
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
+
+
+
+
+  function logincall(request,response){
+
+    console.log('login in being called');
+
+    const password = request.body.password;
+    const username = request.body.username;
+
+    console.log(password);
+    console.log(username);
+  
+    
+    login_db(password,username,function(error,result){
+  
+      if (error || result == null || result.length != 1){
+        response.status(500).json({success:false, data:error});
+      } else {
+  
+        const person = result;
+
+        //set customer_id in the session
+        request.session.customer_id = person[0].customer_id;
+        console.log(person[0].customer_id);
+        console.log(person);
+
+
+  
+         //chance to remove [0]
+        //response.status(200).json(person);
+        login_db1(request,password,username,function(error,result){
+  
+          if (error || result == null || result.length != 1){
+            response.status(500).json({success:false, data:error});
+          } else {
+      
+            const person = result;
+    
+            //set customer_id in the session
+            
+    
+    
+            console.log(request.session);
+            request.session.orders_id = person[0].orders_id;
+             //chance to remove [0]
+            response.status(200).json(person);
+            
+    
+            
+            
+      
+            //response.render('pages/browse', params);
+          }
+      
+        });
+    
+
+        
+        
+  
+        //response.render('pages/browse', params);
+      }
+  
+    });
+
+  
+
+
+  } //END logincall
+  
+  
+  
+  function login_db1(request,password,username,callback){
+  
+    console.log("logging in query");
+    console.log(password);
+    console.log(username);
+
+    console.log('customer_id');
+    console.log('request.session.customer_id');
+    const customer_id = request.session.customer_id;
+  
+    const sql = "SELECT orders_id from orders WHERE customer_id= $1 ORDER BY orders_id DESC LIMIT 1;";
+  
+    const params = [customer_id];
+  
+    pool.query(sql, params, function(err,result){
+  
+      if (err){
+        console.log("Error in query: ");
+        console.log(err);
+        callback(err,null);
+      }
+  
+    console.log("Found result: " + JSON.stringify(result.rows));
+  
+  
+    callback(null,result.rows);
+  });
+  } //ENDOF login
+
+  function login_db(password,username,callback){
+  
+    console.log("logging in query");
+    console.log(password);
+    console.log(username);
+  
+    const sql = "SELECT * from userinfo WHERE password = $1::text AND username = $2::text";
+  
+    const params = [password,username];
+  
+    pool.query(sql, params, function(err,result){
+  
+      if (err){
+        console.log("Error in query: ");
+        console.log(err);
+        callback(err,null);
+      }
+  
+    console.log("Found result: " + JSON.stringify(result.rows));
+  
+  
+    callback(null,result.rows);
+  });
+  } //ENDOF login
+
+
+
+
+
+
+
+
+
 
 
   function load_browse(req,res)

@@ -3,14 +3,15 @@ const connectionString = process.env.DATABASE_URL || 'postgres://umihiiovjmsfyf:
 const pool = new Pool({ connectionString: connectionString });
 
 
-
-
 function logincall(request,response){
 
     console.log('login in being called');
 
     const password = request.body.password;
     const username = request.body.username;
+
+    console.log(password);
+    console.log(username);
   
     
     login_db(password,username,function(error,result){
@@ -20,9 +21,18 @@ function logincall(request,response){
       } else {
   
         const person = result;
+        console.log('REQUEST');
+        console.log(request);
+
+        request.session.customer_id = person[0].customer_id;
+        console.log(person[0].customer_id);
+        console.log(person);
+
+
   
-        ; //chance to remove [0]
+         //chance to remove [0]
         response.status(200).json(person);
+        
   
         //response.render('pages/browse', params);
       }
@@ -35,6 +45,8 @@ function logincall(request,response){
   function login_db(password,username,callback){
   
     console.log("logging in query");
+    console.log(password);
+    console.log(username);
   
     const sql = "SELECT * from userinfo WHERE password = $1::text AND username = $2::text";
   
@@ -60,6 +72,3 @@ function logincall(request,response){
 
 
 
-module.exports = {
-    logincall:logincall
-  };
