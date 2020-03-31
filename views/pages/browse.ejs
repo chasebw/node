@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../styles/cool-form.css">
 <script type="text/javascript">
 
@@ -191,9 +192,21 @@
         //make result html here
         var popupinfo = "";
 
-        popupinfo += "<img src='" + response[0].picture + "'alt ='" + response[0].product_name + "'height='100' width='50'>";
+
+
+      ///
+      // <div class="w3-display-container"><div class="w3-display-topleft w3-black w3-padding">Iphone 6S $99.99</div>
+      // <img src="images/phone.jpg" class="tint" alt="Iphone 6S" style="width:100%" value="1" onclick="item_popup(this)">
+      // </img></div>
+
+
+
+
+        
+        popupinfo += "<img src='" + response[0].picture + "' class='item_image' alt ='" + response[0].product_name + "'>";
+        popupinfo += "<p class='item_text'>"+ response[0].product_name +' '+'$' + response[0].price + " </p>";
         popupinfo += "<form action='/add_cart' method='POST' onSubmit='return ajax_FormSubmitter(this);'>";
-        popupinfo += "<button type='submit' value='" + response[0].product_id + "' name='id' id='add_cart'> Add To Cart</button> </form>";
+        popupinfo += "<button class='single_item_button' type='submit' value='" + response[0].product_id + "' name='id' id='add_cart'> Add To Cart</button> </form>";
 
 
 
@@ -448,6 +461,8 @@
 
 
 
+
+
       //$('#id').css("display","block")
       $('.bg-modal').css("display", "flex");
       //Make page not scrollable at that moment ?????
@@ -500,10 +515,12 @@
           //+
 
           for (var i = 0; i < data.length; i++) {
+
+            price = "$" + data[i].price;
             result += "<div class='w3-col l3 m6 w3-margin-bottom'>";
             result += "<div class='w3-display-container'>";
-            result += "<div class='w3-display-topleft w3-black w3-padding'>" + data[i].product_name + "</div>";
-            result += "<img  src='" + data[i].picture + "' alt='" + data[i].product_name + "' style='width:100%'" + " value='" + data[i].product_id + "' onclick='item_popup(this)'>";
+            result += "<div class='w3-display-topleft w3-black w3-padding'>" + data[i].product_name + ' ' + price + "</div>";
+            result += "<img  src='" + data[i].picture + "' class='tint' alt='" + data[i].product_name + "' style='width:100%'" + " value='" + data[i].product_id + "' onclick='item_popup(this)'>";
             result += "</div>";
             result += "</div>";
           }
@@ -762,6 +779,47 @@ a:hover {
   justify-content: center;
 }
 
+img.tint:hover {
+    opacity: .5;
+    cursor: pointer;
+}
+
+.item_image{
+  max-width: 241px;
+  height: auto;
+  box-shadow: 8px 7px 5px black;
+
+}
+
+.item_image:hover{
+  opacity: .86;
+}
+
+button#add_cart {
+    text-align: center;
+    margin: 20px 109px;
+}
+
+.item_text {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 400;
+  font-family: 'Poppins', sans-serif;
+  margin-top: 12px;
+  font-size: large;
+
+}
+
+.single_item_popup{
+  height: 445px;
+}
+
+.single_item_button:hover{
+  color: whitesmoke;
+  background-color: rgb(32, 133, 151);
+
+}
+
+
 </style>
 
 <body>
@@ -796,6 +854,9 @@ a:hover {
 
 
 
+
+
+
   <!-- Page content -->
   <div class="w3-content w3-padding" style="max-width:1564px">
 
@@ -804,11 +865,15 @@ a:hover {
       <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Nakajima's Wonder Emporium Store</h3>
     </div>
 
+   
+
 
 
      <div class="flex-container">
     <!-- Jquery button is here-->
-    <button id="allItemsButton" class="button-login"> Show Items</button>
+    <button id="allItemsButton" class="button-login"> Show Items</button> <br> <br> <br>
+    <p><b> Blast $99.99</b></p>
+
   </div>
 
     <!-- Jquery button is here-->
@@ -979,7 +1044,7 @@ a:hover {
 
   <!-- Product Popup Modal -->
   <div class="product">
-    <div class="bg-modal-product-content">
+    <div class="bg-modal-product-content single_item_popup">
       <!-- We are using + instead of cross we will twist in css-->
       <div class="close">+</div>
       <div id='product_popup'>
@@ -990,6 +1055,8 @@ a:hover {
       </div>
     </div>
   </div> <!-- Popup product Modal Section END-->
+
+
 
 
 
