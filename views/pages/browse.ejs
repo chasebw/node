@@ -310,13 +310,10 @@
         if(id == 'signup')
         {
           console.log('is sign up form');
-          $('#signup-popup').css('display','none');
+         // $('#signup-popup').css('display','none');
         
         }
-        else if (id == 'login_form')
-        {
-          closelogin();
-        }
+        
     
     
 
@@ -343,8 +340,39 @@
         type: type,
         data: data,
         success: function (response) {
+          if (id == 'login_form')
+        {
+          
+        
+          if(response.data == 'badlogin')
+          {
+            console.log('Ajax Form submit ________UNSUCCESSFUL LOGIN_______________!');
+            $('.container-1').css('height','497px');
+            $('#login_error').css('display','block');
+            //document.getElementById('login-popup').style.display = "flex";
+            //write code here to display red text for bad login
+            //TODO: only close login window if good and also we can make the login and signin invisible and
+            //make the page display the name
+            //add logout button and watch express authentication video
+            // make the signin visible.
+            //also we cab say hello to the user somewhere on the page if we want....
+            // next we need to make logout function....
+            //TODO: Add Checkout button
+          }
+          else
+          {
+            //successful login
+            $('.container-1').css('height','475px');
+            $('#login_error').css('display','none');
+            $('.container-login').css('display','none');
+            closelogin();
+
+          }
+
+        }
+          console.log('____________RESPONSE___________________');
           console.log(response);
-          console.log("Ajax success on cart :)");
+          console.log("Ajax success ");
 
           if (that.attr("id") == 'product_form') {
             console.log('is product form');
@@ -774,6 +802,15 @@ a:hover {
 .container-2{
   top: calc(50% - 300px);
   height: 554px;
+  position: relative;
+  display: block;
+  margin-bottom: 80px;
+  width: 500px;
+  text-align: center;
+  background: #fff;
+  border-radius: 5px;
+  overflow: hidden;
+  z-index: 1;
 }
 .flex-container{
   justify-content: center;
@@ -899,7 +936,7 @@ button#add_cart {
     <div class="w3-row-padding w3-grayscale">
       <div class="w3-col l3 m6 w3-margin-bottom">
         <img src="../../images/deal1.jpg" alt="John" style="width:100%">
-        <h3 style="background-color: rgb(59, 59, 116);" style="color: crimson;">Feature Deal</h3>
+        <h3 >Feature Deal</h3>
         <p class="w3-opacity">BIG DEAL</p>
         <p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
         <p><button class="w3-button w3-light-grey w3-block">BUY</button></p>
@@ -978,6 +1015,7 @@ button#add_cart {
   <form action="/login" method="POST" class='ajax_form' id="login_form">
     <input type="text" class="email" name="username" placeholder="Username">
     <br/>
+    <p class="error" id="login_error">ERROR: Invalid username or password.</p>
     <input type="password" class="pwd" name="password" placeholder="password">
  
   <a href="#" class="link">
@@ -1004,7 +1042,7 @@ button#add_cart {
 
 
   <div class="login-popup" id="signup-popup">
-    <div class="container-1 container-2">
+    <div class="container-2">
       <h2>Sign Up</h2>
       <form action="/signup" method="POST" class='ajax_form' id="signup">
         <input type="text" class="email signup-input" name="first_name" placeholder="First Name">

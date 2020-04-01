@@ -18,7 +18,10 @@ function logincall(request,response){
   
       if (error || result == null || result.length != 1){
         response.status(500).json({success:false, data:error});
+        console.log('_________________________________________login fail________________________________');
       } else {
+
+        console.log('__________________________________________________login succeed______________________________________');
   
         const person = result;
         console.log('REQUEST');

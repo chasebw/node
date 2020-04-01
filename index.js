@@ -79,14 +79,20 @@ express()
   
     
     login_db(password,username,function(error,result){
+
+      const person = result;
   
-      if (error || result == null || result.length != 1){
-        response.status(500).json({success:false, data:error});
+
+      if (error || result == null|| result.length != 1){
+        response.status(200).json({success:true, data:'badlogin'});
+        console.log('________________________________LOGIN FAILED___________________________________');
       } else {
   
-        const person = result;
+        console.log('________________________________LOGIN SUCCEED______________________________________');
+        //const person = result;
 
         //set customer_id in the session
+        
         request.session.customer_id = person[0].customer_id;
         console.log(person[0].customer_id);
         console.log(person);
@@ -130,8 +136,8 @@ express()
   
     });
 
+    
   
-
 
   } //END logincall
   
@@ -189,6 +195,9 @@ express()
   
     callback(null,result.rows);
   });
+
+
+  
   } //ENDOF login
 
 
