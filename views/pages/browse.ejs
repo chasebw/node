@@ -11,6 +11,306 @@
 <script type="text/javascript">
 
 
+function refresh_checkout()
+    {
+      console.log('checkout run');
+
+      //cart click AJAX START
+      //$('cart').css('display','none');
+      //$('.bg-modal').css("display", "none");
+      //$('.product').css("display", "none");
+
+      $.ajax({
+        url: 'checkout/',
+        type: 'POST',
+        dataType: 'json', //will parse json into javascript object
+        //callback called when suceed
+        success: (data) => {
+          console.log('ajax success!', data);
+
+          var totalprice = parseFloat(0);
+          var newCart = "";
+
+          newCart += "<table class='table table-hover'>";
+          //change 12:19
+          newCart += "<tr>";
+        newCart += "<td><strong>Customer Name</strong></td>";
+        newCart += "<th><strong>Address</strong></td>";
+        newCart += "<td><strong>Credit Card Number</strong></td>";
+        newCart += "<td><strong>Username</strong></td>"
+        newCart += "</tr>";
+        newCart += "<tr>";
+        newCart += "<td>"+ data[0].customer_name +"</td>";
+        newCart += "<td>"+ data[0].address +"</td>";
+        newCart += "<td>"+ data[0].cc_number +"</td>";
+        newCart += "<td>"+ data[0].username +"</td>";
+        newCart += "</tr>";
+
+
+          // newCart += "<thead> <tr>";
+          // newCart += "<th>Product Name</th>";
+          // newCart += "<th>Description</th>";
+          // newCart += "<th>Price</th>";
+          // newCart += "<th>Action</th>";
+          // newCart += "</tr></thead>";
+          // newCart += "</tbody>";
+
+
+          newCart += "<tr>";
+        newCart += "<td><strong>Product Name</strong></td>";
+        newCart += "<th><strong>Description</strong></td>";
+        newCart += "<td><strong>Price</strong></td>";
+        newCart += "<td><strong>Action </strong></td>"
+        newCart += "</tr>";
+
+
+          
+
+
+          $.each(data, function (index, value) {
+
+            newCart += "<tr>";
+            newCart += "<td>"+ this.product_name +"</td>";
+            newCart += "<td>"+ this.product_description + "</td>";
+            newCart += "<td>" + "$" + this.price+ "</td>";
+            newCart += "<td>";
+            newCart += "<form action='/remove' method='POST' class='remover' onSubmit='return ajax_FormSubmitter(this);'><button type='submit' class='btn btn-danger' name='remove' value='" + this.customer_order_id + "'>REMOVE ITEM</button></form>";
+
+            newCart += "</td>";
+            newCart += "</tr>";
+
+            totalprice += parseFloat(this.price);
+
+            //newCart += this.product_name;
+
+          });// END LOOP
+
+          //added
+        //var tax = 0;
+           var tax = parseFloat(totalprice * .06);
+          var total = tax + totalprice;
+
+
+         //added
+         newCart += "<tr>";
+        newCart += "<td><strong>Cost</strong></td>";
+        newCart += "<th><strong>Tax</strong></td>";
+        newCart += "<td><strong>Total Price</strong></td>";
+        newCart += "<td><strong>Action</strong></td>"
+        newCart += "</tr>";
+        newCart += "<tr> <td> $" + totalprice.toFixed(2) +  "</td>";
+        newCart += "<td> $" + tax.toFixed(2) + "</td>";
+        newCart += "<td> $" + total.toFixed(2) + " </td>";
+        newCart += "<td>"+ "<button type='submit' id='done' class='btn btn-danger' onclick='confirm_checkout()' name='checkout' value='" + this.customer_order_id +"'>Confirm Order </button>" + "</td>";
+        newCart += "<td>"+ "<button type='submit' id='cancel' class='btn btn-danger' onclick='closecheckout()' value='" + this.customer_order_id +"'>Cancel Order </button>" + "</td>";
+        
+        //added end
+
+          newCart += "</tbody></table>";
+          result = "";
+
+          result = newCart;
+
+          //select status id element display in html
+          $('.editcheckout').html(result);
+
+        }//sucess data call
+
+      });//ajax function call
+      //CART CLICK AJAX END
+
+
+
+    }//cartPopup on click
+
+
+function confirm_checkout()
+    {
+      console.log('checkout confirm');
+
+      //cart click AJAX START
+      //$('cart').css('display','none');
+      //$('.bg-modal').css("display", "none");
+      //$('.product').css("display", "none");
+
+      $.ajax({
+        url: 'confirm/',
+        type: 'POST',
+        dataType: 'json', //will parse json into javascript object
+        //callback called when suceed
+        success: (data) => {
+          console.log('ajax success!', data);
+          refresh_cart();
+
+        
+        //added end
+          var newCart = '';
+
+          newCart += "<p>Your Order has been confirmed!</p>";
+          newCart += "<button type='submit' id='closer' class='btn btn-danger' onclick='closecheckout()' value='" + this.customer_order_id +"'>Close </button>"
+          result = "";
+
+          result = newCart;
+
+          //select status id element display in html
+          $('.editcheckout').html(result);
+
+        }//sucess data call
+
+      });//ajax function call
+      //CART CLICK AJAX END
+
+
+
+
+
+      //cartpopup
+
+      //$('#id').css("display","block")
+      $('.bg-modal-checkout').css("display", "flex");
+
+      //Make page not scrollable at that moment ?????
+      $('body').css("overflow", "hidden");
+      $('html').css("overflow", "hidden");
+
+    }//cartPopup on click
+
+
+
+
+function closecheckout()
+    {
+      $('.bg-modal-checkout').css("display", "none");
+      
+      //Make page not scrollable at that moment 
+      $('body').css("overflow", "visible");
+      $('html').css("overflow", "visible");
+    }
+
+function checkout_run()
+    {
+      console.log('checkout run');
+
+      //cart click AJAX START
+      //$('cart').css('display','none');
+      $('.bg-modal').css("display", "none");
+      $('.product').css("display", "none");
+
+      $.ajax({
+        url: 'checkout/',
+        type: 'POST',
+        dataType: 'json', //will parse json into javascript object
+        //callback called when suceed
+        success: (data) => {
+          console.log('ajax success!', data);
+
+          var totalprice = parseFloat(0);
+          var newCart = "";
+
+          newCart += "<table class='table table-hover'>";
+          //change 12:19
+          newCart += "<tr>";
+        newCart += "<td><strong>Customer Name</strong></td>";
+        newCart += "<th><strong>Address</strong></td>";
+        newCart += "<td><strong>Credit Card Number</strong></td>";
+        newCart += "<td><strong>Username</strong></td>"
+        newCart += "</tr>";
+        newCart += "<tr>";
+        newCart += "<td>"+ data[0].customer_name +"</td>";
+        newCart += "<td>"+ data[0].address +"</td>";
+        newCart += "<td>"+ data[0].cc_number +"</td>";
+        newCart += "<td>"+ data[0].username +"</td>";
+        newCart += "</tr>";
+
+
+          // newCart += "<thead> <tr>";
+          // newCart += "<th>Product Name</th>";
+          // newCart += "<th>Description</th>";
+          // newCart += "<th>Price</th>";
+          // newCart += "<th>Action</th>";
+          // newCart += "</tr></thead>";
+          // newCart += "</tbody>";
+
+
+          newCart += "<tr>";
+        newCart += "<td><strong>Product Name</strong></td>";
+        newCart += "<th><strong>Description</strong></td>";
+        newCart += "<td><strong>Price</strong></td>";
+        newCart += "<td><strong>Action </strong></td>"
+        newCart += "</tr>";
+
+
+          
+
+
+          $.each(data, function (index, value) {
+
+            newCart += "<tr>";
+            newCart += "<td>"+ this.product_name +"</td>";
+            newCart += "<td>"+ this.product_description + "</td>";
+            newCart += "<td>" + "$" + this.price+ "</td>";
+            newCart += "<td>";
+            newCart += "<form action='/remove' method='POST' class='remover' onSubmit='return ajax_FormSubmitter(this);'><button type='submit' class='btn btn-danger' name='remove' value='" + this.customer_order_id + "'>REMOVE ITEM</button></form>";
+
+            newCart += "</td>";
+            newCart += "</tr>";
+
+            totalprice += parseFloat(this.price);
+
+            //newCart += this.product_name;
+
+          });// END LOOP
+
+          //added
+        //var tax = 0;
+           var tax = parseFloat(totalprice * .06);
+          var total = tax + totalprice;
+
+
+         //added
+         newCart += "<tr>";
+        newCart += "<td><strong>Cost</strong></td>";
+        newCart += "<th><strong>Tax</strong></td>";
+        newCart += "<td><strong>Total Price</strong></td>";
+        newCart += "<td><strong>Action</strong></td>"
+        newCart += "</tr>";
+        newCart += "<tr> <td> $" + totalprice.toFixed(2) +  "</td>";
+        newCart += "<td> $" + tax.toFixed(2) + "</td>";
+        newCart += "<td> $" + total.toFixed(2) + " </td>";
+        newCart += "<td>"+ "<button type='submit' id='done' class='btn btn-danger' onclick='confirm_checkout()' name='checkout' value='" + this.customer_order_id +"'>Confirm Order </button>" + "</td>";
+        newCart += "<td>"+ "<button type='submit' id='cancel' class='btn btn-danger' onclick='closecheckout()' value='" + this.customer_order_id +"'>Cancel Order </button>" + "</td>";
+        
+        //added end
+
+          newCart += "</tbody></table>";
+          result = "";
+
+          result = newCart;
+
+          //select status id element display in html
+          $('.editcheckout').html(result);
+
+        }//sucess data call
+
+      });//ajax function call
+      //CART CLICK AJAX END
+
+
+
+
+
+      //cartpopup
+
+      //$('#id').css("display","block")
+      $('.bg-modal-checkout').css("display", "flex");
+
+      //Make page not scrollable at that moment ?????
+      $('body').css("overflow", "hidden");
+      $('html').css("overflow", "hidden");
+
+    }//cartPopup on click
+
+
 
   //refresh cart....
   function refresh_cart() {
@@ -74,7 +374,7 @@
         newCart += "<tr> <td> $ " + totalprice.toFixed(2) +  "</td>";
         newCart += "<td> $" + tax.toFixed(2)  + " </td>";
         newCart += "<td> $" + total.toFixed(2)  + " </td>";
-        newCart += "<td>"+  "<form action='' method='POST'  onSubmit='return ajax_FormSubmitter(this);'><button type='submit' class='btn btn-danger' name='remove' value='" + this.customer_order_id +"'>CHECKOUT </button></form>" + "</td>";
+        newCart += "<td>"+  "<button type='button' class='btn btn-danger' name='remove' onclick='checkout_run()' id='checkout' value='" + this.customer_order_id +"'>CHECKOUT </button>" + "</td>";
         
         //added end
 
@@ -109,13 +409,14 @@
       refresh_cart();
 
       //bg-modal
-      $('.bg-modal').css("display", "none");
-      $('body').css("overflow", "visible");
-      $('html').css("overflow", "visible");
+      //commented out
+      // $('.bg-modal').css("display", "none");
+      // $('body').css("overflow", "visible");
+      // $('html').css("overflow", "visible");
 
-      $('.bg-modal').css("display", "flex");
-      $('body').css("overflow", "hidden");
-      $('html').css("overflow", "hidden");
+      // $('.bg-modal').css("display", "flex");
+      // $('body').css("overflow", "hidden");
+      // $('html').css("overflow", "hidden");
 
       //Make page not scrollable at that moment 
 
@@ -145,6 +446,7 @@
         console.log("Ajax success on cart :)");
         //use success callback to referesh cart
         refresh_cart();
+        refresh_checkout();
         if (url == '/add_cart') {
 
           console.log('added_cart');
@@ -294,6 +596,8 @@
 
       console.log('running ajax_form submit');
 
+  
+
 
 
 
@@ -304,15 +608,11 @@
         id = that.attr('id');
         data = {};
 
+      
 
 
 
-        if(id == 'signup')
-        {
-          console.log('is sign up form');
-         // $('#signup-popup').css('display','none');
         
-        }
         
     
     
@@ -333,6 +633,28 @@
 
 
       });
+
+      if(id == 'signup')
+        { 
+          if(data['password'] != data['password2'])
+          {
+            console.log('passwords __DONT__ match');
+            //592px
+            $('.container-2').css('height','592px');
+            $('#signup_pass_error').css('display','block');
+            return false;
+          }
+          else
+          {
+            $('.container-2').css('height','554px');
+            $('#signup_pass_error').css('display','none');
+            //console.log($('#signup'));
+            closesignin();
+            console.log('passwords _____match__________');
+          }
+         // $('#signup-popup').css('display','none');
+        
+        }
 
 
       $.ajax({
@@ -366,6 +688,7 @@
             $('#login_error').css('display','none');
             $('.container-login').css('display','none');
             closelogin();
+            refresh_cart();
 
           }
 
@@ -378,6 +701,7 @@
             console.log('is product form');
             //refresh cart when you add a new item
             refresh_cart();
+            refresh_checkout();
 
           }
         }
@@ -404,6 +728,20 @@
 
     });
 
+    
+    
+
+    function opencheckout(){
+      $('.bg-modal').css('display','none');
+      $('.bg-modal-checkout').css("display", "flex");
+      //Make page not scrollable at that moment ?????
+      $('body').css("overflow", "hidden");
+      $('html').css("overflow", "hidden");
+    }
+
+
+ 
+
 
 
     $('#cartPopup').click(() => {
@@ -418,6 +756,7 @@
         //callback called when suceed
         success: (data) => {
           console.log('ajax success!', data);
+          refresh_checkout();
 
           var totalprice = parseFloat(0);
           var newCart = "";
@@ -468,7 +807,7 @@
         newCart += "<tr> <td> $ " + totalprice.toFixed(2) +  "</td>";
         newCart += "<td> $" + tax.toFixed(2)  + " </td>";
         newCart += "<td> $" + total.toFixed(2)  + " </td>";
-        newCart += "<td>"+  "<form action='' method='POST'  onSubmit='return ajax_FormSubmitter(this);'><button type='submit' class='btn btn-danger' name='remove' value='" + this.customer_order_id +"'>CHECKOUT </button></form>" + "</td>";
+        newCart += "<td>"+  "<button type='button' class='btn btn-danger' onclick='checkout_run()' id='checkout' name='remove' value='" + this.customer_order_id +"'>CHECKOUT </button>" + "</td>";
         
         //added end
 
@@ -489,7 +828,7 @@
 
 
 
-
+      //cartpopup
 
       //$('#id').css("display","block")
       $('.bg-modal').css("display", "flex");
@@ -504,6 +843,7 @@
 
       $('.bg-modal').css("display", "none");
       $('.product').css("display", "none");
+      $('.bg-modal-checkout').css("display", "none");
       //Make page not scrollable at that moment ?????
       $('body').css("overflow", "visible");
       $('html').css("overflow", "visible");
@@ -601,7 +941,7 @@
 
 </script>
 <style>
-  .bg-modal,
+  .bg-modal, .bg-modal-checkout,
   .product, .login-popup{
     width: 100%;
     height: 100%;
@@ -612,7 +952,6 @@
     position: absolute;
     /*before top: 0*/
     top: 0;
-    display: flex;
     /* center  horizontally*/
     justify-content: center;
     /* center  vertically*/
@@ -631,7 +970,7 @@
 
 
 
-  .bg-modal-content {
+  .bg-modal-content, .bg-modal-content-checkout {
     background-color: rgb(255, 255, 255);
     border-radius: 4px;
     /*make everything centered*/
@@ -986,8 +1325,6 @@ button#add_cart {
 
     <!-- End page content -->
   </div>
-
-
   <!-- Footer -->
   <footer class="w3-center w3-black w3-padding-16">
     <p>Contact Us At:<a href="#" title="W3.CSS" target="_blank" class="w3-hover-text-green">952-229-3342</a></p>
@@ -1051,6 +1388,7 @@ button#add_cart {
         <br/>
         <input type="text" class="pwd signup-input" name="username" placeholder="Username">
         <br/>
+        <p class="error" id="signup_pass_error">The passwords do not match.</p>
         <input type="password" class="pwd signup-input" name="password" placeholder="Password">
         <br/>
         <input type="password" class="pwd signup-input" name="password2" placeholder="Password Verification">
@@ -1076,8 +1414,6 @@ button#add_cart {
     </div>
   </div>
 
-
-
   <!-- Product Popup Modal -->
   <div class="product">
     <div class="bg-modal-product-content single_item_popup">
@@ -1094,13 +1430,19 @@ button#add_cart {
 
 
 
-
-
-
-
-
-
-  
+  <!-- currently checkout will display with cart needs to be changed.... the class name....-->
+  <!-- Popup Checkout Modal Section-->
+  <div class="bg-modal-checkout">
+    <div class="bg-modal-content-checkout" id="checkout">
+      <!-- We are using + instead of cross we will twist in css-->
+      <div class="close">+</div>
+      <div class="editcheckout">
+        <table class="table table-hover"> <tbody><tr><th>Product Name:</th><th>Description:</th><th>Price:</th><th>Action</th></tr></tbody><tbody><tr><td>The Rollable Phone</td><td>A phone that can roll open a bigger screen</td><td>$2999.99</td><td><form action="/remove" method="POST" class="remover" onsubmit="return ajax_FormSubmitter(this);"><button type="submit" class="btn btn-danger" name="remove" value="3">REMOVE ITEM</button></form></td></tr><tr><td>The Rollable Phone</td><td>A phone that can roll open a bigger screen</td><td>$2999.99</td><td><form action="/remove" method="POST" class="remover" onsubmit="return ajax_FormSubmitter(this);"><button type="submit" class="btn btn-danger" name="remove" value="4">REMOVE ITEM</button></form></td></tr><tr><td>Iphone 7S</td><td>A Sleek Iphone with a BIG attitude.</td><td>$199.99</td><td><form action="/remove" method="POST" class="remover" onsubmit="return ajax_FormSubmitter(this);"><button type="submit" class="btn btn-danger" name="remove" value="5">REMOVE ITEM</button></form></td></tr><tr><td>The Z Fold</td><td>A dynamically designed smart phone</td><td>$1999.99</td><td><form action="/remove" method="POST" class="remover" onsubmit="return ajax_FormSubmitter(this);"><button type="submit" class="btn btn-danger" name="remove" value="6">REMOVE ITEM</button></form></td></tr><tr><td>The Rollable Phone</td><td>A phone that can roll open a bigger screen</td><td>$2999.99</td><td><form action="/remove" method="POST" class="remover" onsubmit="return ajax_FormSubmitter(this);"><button type="submit" class="btn btn-danger" name="remove" value="7">REMOVE ITEM</button></form></td></tr></tbody></table>
+        
+      </div>
+      </form>
+    </div>
+  </div> <!-- Popup Cart Modal Section END-->
 
 
 </body>

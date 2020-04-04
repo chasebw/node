@@ -150,6 +150,19 @@ VALUES (1,'4444-4444-4444-44444','P Sherman 42 Wallaby Way Sydney, Australia', '
 
 
 
+ SELECT c.customer_id,c.customer_name,po.customer_order_id,po.orders_id, po.product_id, ui.username, ui.cc_number,ui.address from customer c 
+ JOIN product_orders po 
+ ON c.customer_id = po.customer_id 
+ JOIN userinfo ui 
+ ON ui.customer_id = po.customer_id 
+ WHERE c.customer_id = 1; 
+
+
+SELECT c.customer_id,c.customer_name,po.customer_order_id,po.orders_id, po.product_id, ui.username, ui.cc_number,ui.address,p.product_name, p.product_description, p.price from customer c JOIN product_orders po ON c.customer_id = po.customer_id JOIN userinfo ui ON ui.customer_id = po.customer_id JOIN product p ON p.product_id = po.product_id WHERE c.customer_id = 1; 
+
+
+
+
 
 
 

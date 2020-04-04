@@ -35,7 +35,7 @@ function signupcall(request, response) {
         params = result; //chance to remove [0]
         console.log("inserted customer");
         //response.status(500).json({success:false, data:error});
-        response.status(200).json(params);
+        //response.status(200).json(params); //line 38 was commented out .....
 
         change_db2(info, function (error, result) {
   

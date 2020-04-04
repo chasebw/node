@@ -12,6 +12,7 @@ const CartController = require('./controllers/cart.js');
 const OrderController = require('./controllers/order.js');
 const SignupController = require('./controllers/signup.js');
 const loginController = require('./controllers/login.js');
+const checkoutController = require('./controllers/checkout.js')
 const session = require('express-session');
 
 const {Pool} = require('pg')
@@ -48,6 +49,8 @@ express()
   .post('/add_cart', CartController.add_cart)
   .get('/storeitems',load_browse)
   .post('/customer',OrderController.load_cart)
+  .post('/checkout',checkoutController.get_checkout)
+  .post('/confirm',checkoutController.confirm)
   .post('/remove', OrderController.remove_item)
   .post('/single_item', ProductController.get_single_item)
   .post('/signup', SignupController.signupcall)
